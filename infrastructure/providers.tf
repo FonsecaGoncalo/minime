@@ -14,10 +14,6 @@ terraform {
   backend "s3" {}
 }
 
-provider "honeycombio" {
-  api_key = var.honeycomb_api_key
-}
-
 provider "aws" {
   region = var.aws_region
 }

@@ -23,11 +23,6 @@ variable "anthropic_api_key" {
   sensitive = true
 }
 
-variable "honeycomb_api_key" {
-  type      = string
-  sensitive = true
-}
-
 variable "newrelic_license_key" {
   type      = string
   sensitive = true
@@ -38,28 +33,7 @@ variable "google_service_account" {
   sensitive = true
 }
 
-variable "calendar_id" {
-  type      = string
-  sensitive = true
-}
-
 variable "event_bus_name" {
-  type      = string
-  sensitive = true
-}
-
-
-variable "eum_origination_number" {
-  type      = string
-  sensitive = true
-}
-
-variable "eum_destination_number" {
-  type      = string
-  sensitive = true
-}
-
-variable "eum_application_id" {
   type      = string
   sensitive = true
 }

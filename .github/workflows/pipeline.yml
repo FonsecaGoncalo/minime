@@ -22,13 +22,8 @@ jobs:
       TF_VAR_notion_db_id: ${{ secrets.NOTION_DB_ID }}
       TF_VAR_pinecone_api_key: ${{ secrets.PINECONE_API_KEY }}
       TF_VAR_anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-      TF_VAR_honeycomb_api_key: ${{ secrets.HONEYCOMB_API_KEY }}
       TF_VAR_google_service_account: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-      TF_VAR_calendar_id: ${{ secrets.CALENDAR_ID }}
       TF_VAR_event_bus_name: ${{ secrets.EVENT_BUS_NAME }}
-      TF_VAR_eum_origination_number: ${{ secrets.EUM_ORIGINATION_NUMBER }}
-      TF_VAR_eum_destination_number: ${{ secrets.EUM_DESTINATION_NUMBER }}
-      TF_VAR_eum_application_id: ${{ secrets.EUM_APPLICATION_ID }}
       TF_VAR_ses_from_email: ${{ secrets.SES_FROM_EMAIL }}
       TF_VAR_ses_to_email: ${{ secrets.SES_TO_EMAIL }}
       TF_VAR_newrelic_license_key: ${{ secrets.NEWRELIC_LICENSE_KEY }}
