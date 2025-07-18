@@ -36,14 +36,9 @@ resource "aws_lambda_function" "chat_handler" {
       NOTION_DB_ID                                     = var.notion_db_id
       PINECONE_API_KEY                                 = var.pinecone_api_key
       ANTHROPIC_API_KEY                                = var.anthropic_api_key
-      HONEYCOMB_API_KEY                                = var.honeycomb_api_key
       GOOGLE_SERVICE_ACCOUNT                           = var.google_service_account
       SES_TO_EMAIL                                     = var.ses_to_email
-      CALENDAR_ID                                      = var.calendar_id
       EVENT_BUS_NAME                                   = var.event_bus_name
-      EUM_APPLICATION_ID                               = var.eum_application_id
-      EUM_ORIGINATION_NUMBER                           = var.eum_origination_number
-      EUM_DESTINATION_NUMBER                           = var.eum_destination_number
       OTEL_LOGS_EXPORTER                               = "otlp"
       OTEL_EXPORTER_OTLP_ENDPOINT                      = "https://otlp.eu01.nr-data.net:4317"
       OTEL_EXPORTER_OTLP_HEADERS                       = "api-key=${var.newrelic_license_key}"
