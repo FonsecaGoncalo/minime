@@ -22,7 +22,7 @@ System Architecture
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="/img_1.png">
+  <source media="(prefers-color-scheme: light)">
   <img alt="minime logo" src="assets/diagram.png" width="80%" height="80%">
 </picture>
 </div>
