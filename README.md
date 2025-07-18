@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="/img_1.png">
-  <img alt="minime logo" src="/assets/minime.png" width="25%" height="25%">
+  <source media="(prefers-color-scheme: light)">
+  <img alt="minime logo" src="assets/minime.png" width="25%" height="25%">
 </picture>
 
 **Minime**: AI Personal Assistant
@@ -23,6 +23,6 @@ System Architecture
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="/img_1.png">
-  <img alt="minime logo" src="/assets/diagram.png" width="80%" height="80%">
+  <img alt="minime logo" src="assets/diagram.png" width="80%" height="80%">
 </picture>
 </div>
