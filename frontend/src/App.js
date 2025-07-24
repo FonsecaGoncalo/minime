@@ -76,7 +76,7 @@ export default function App() {
             [arr[i], arr[j]] = [arr[j], arr[i]];
         }
         return arr.slice(0, 3);
-    }, [connectionVersion]);
+    }, []);
 
     // ---------- WebSocket lifecycle ----------
     useEffect(() => {
