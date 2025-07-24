@@ -16,8 +16,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 init_tracing("chat_handler")
 
-# Rate limiting configuration: allow 2 messages per minute with bursts up to 1
-_RATE_LIMITER = TokenBucket(TokenBucketConfig(2, 1))
+_RATE_LIMITER = TokenBucket(TokenBucketConfig(4, 6))
 
 
 class _Operation(TypedDict):
