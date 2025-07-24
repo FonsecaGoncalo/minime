@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useRef, useEffect, useMemo} from 'react';
 import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
@@ -9,16 +9,26 @@ import MarkdownTypewriter from './components/MarkdownTypewriter';
 
 import {
     XMarkIcon,
-    UserIcon,
     SparklesIcon,
-    CalendarIcon,
+    BriefcaseIcon,
+    CalendarDaysIcon,
+    HeartIcon,
+    WrenchScrewdriverIcon,
+    MusicalNoteIcon,
+    CodeBracketSquareIcon,
+    ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
 
-const EXAMPLE_PROMPTS = [
-    {text: "What kind of projects were you working on at your last job?", Icon: UserIcon},
-    {text: 'Can I schedule a meeting with you to chat more?', Icon: CalendarIcon},
-    {text: "Do you have any pets?", Icon: SparklesIcon},
+const ALL_PROMPTS = [
+    {text: 'Do you enjoy working on side projects?', Icon: SparklesIcon},
+    {text: 'What kind of projects were you working on at your last job?', Icon: BriefcaseIcon},
+    {text: 'Can I schedule a meeting with you to chat more?', Icon: CalendarDaysIcon},
+    {text: 'Do you have any pets?', Icon: HeartIcon},
+    {text: "What's a side project you've worked on that you're particularly proud of?", Icon: WrenchScrewdriverIcon},
+    {text: 'What do you usually enjoy doing outside of work?', Icon: MusicalNoteIcon},
+    {text: 'How did you get into software engineering?', Icon: CodeBracketSquareIcon},
+    {text: 'Can you tell me a bit about your career journey so far?', Icon: ChartBarIcon},
 ];
 
 // --------------------- message bubbles ---------------------
@@ -59,6 +69,14 @@ export default function App() {
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const bottomRef = useRef(null);                        // auto‑scroll anchor
+    const examplePrompts = useMemo(() => {
+        const arr = [...ALL_PROMPTS];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr.slice(0, 3);
+    }, [connectionVersion]);
 
     // ---------- WebSocket lifecycle ----------
     useEffect(() => {
@@ -212,7 +230,7 @@ export default function App() {
                     <div className="flex justify-center mb-10">
                         <div
                             className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory w-full max-w-screen-md px-4">
-                            {EXAMPLE_PROMPTS.map(({text, Icon}) => (
+                            {examplePrompts.map(({text, Icon}) => (
                                 <button
                                     key={text}
                                     onClick={() => send(text)}
