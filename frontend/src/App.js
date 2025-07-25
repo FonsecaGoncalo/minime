@@ -237,7 +237,7 @@ export default function App() {
                                     className="flex-shrink-0 snap-start bg-neutral-900/30 backdrop-blur text-gray-200 border border-neutral-800 rounded-xl p-4 w-3/5 sm:w-48 h-32 flex flex-col justify-between hover:bg-neutral-900/50 transition"
                                 >
                                     <span className="text-sm">{text}</span>
-                                    <Icon className="w-5 h-5 text-gray-400"/>
+                                    <Icon className="w-5 h-5 text-gray-400 self-end"/>
                                 </button>
                             ))}
                         </div>
