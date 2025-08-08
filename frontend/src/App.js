@@ -168,10 +168,10 @@ export default function App() {
 
     return (
         <>
-            <FlyingLogos/>
+            <FlyingLogos className="z-10"/>
             <main
                 className={`
-            min-h-dvh w-full bg-transparent flex flex-col
+            min-h-dvh w-full app-bg flex flex-col
             transition-all duration-500
             ${landing ? 'items-center justify-center' : ''}
           `}
