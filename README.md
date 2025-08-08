@@ -55,3 +55,95 @@ It combines:
    - EventBridge + SQS for async tasks like IP geolocation & conversation summaries
    - Summaries emailed via SES
    - Meetings scheduled in Google Calendar
+
+### **Realtime Streaming Flow**
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User (Browser)
+    participant CF as CloudFront + S3
+    participant WS as API Gateway (WebSocket)
+    participant CH as Lambda chat_handler
+    participant C as chat.py
+    participant VS as Pinecone (RAG)
+    participant LLM as LLM Provider<br/>(Anthropic/Bedrock)
+    participant GCal as Google Calendar
+    participant DDB as DynamoDB (Conversations)
+
+    U->>CF: Load app (HTML/JS/CSS)
+    U->>WS: $connect
+    WS->>CH: Connect event
+    CH->>EventBridge: ConversationStart (ip)
+    CH-->>WS: 200 Connected
+
+    U->>WS: send {message}
+    WS->>CH: route:message
+    CH->>C: chat(session_id, message, on_stream)
+
+    Note over C: Build memory window<br/>& running summary
+    C->>DDB: get_conversation(), get_summary()
+    C-->>DDB: messages, summary
+
+    Note over C: RAG
+    C->>VS: search(query)
+    VS-->>C: top_k snippets
+
+    Note over C: Build LLM messages (system+history+docs)
+    C->>LLM: stream(messages, tools=[schedule_meeting, update_user_info])
+
+    loop token stream
+      LLM-->>C: text chunk
+      C-->>CH: on_stream(chunk)
+      CH-->>WS: {"op":"message_chunk", "content":chunk}
+      WS-->>U: append to assistant bubble
+    end
+
+    alt tool call (schedule_meeting)
+      LLM-->>C: tool_use(start_time, duration, summary, email)
+      C->>GCal: create event
+      GCal-->>C: htmlLink
+      C->>LLM: tool_result(htmlLink)
+      LLM-->>C: confirmation text (stream)
+    end
+
+    C->>DDB: add_message(user), add_message(assistant)
+    C->>DDB: save_summary(updated)
+    C-->>CH: return full text
+    CH-->>WS: {"op":"finish"}
+    WS-->>U: mark message done
+```
+### **Async Tasks: IP Geo & Summaries**
+```mermaid
+sequenceDiagram
+    autonumber
+    participant WS as API Gateway (WebSocket)
+    participant CH as Lambda chat_handler
+    participant EB as EventBridge
+    participant QG as SQS (geo)
+    participant QSUM as SQS (summary)
+    participant GEO as Lambda ip_geolocation_handler
+    participant SUM as Lambda conversation_summary_handler
+    participant GEOAPI as ip-api.com
+    participant DDB as DynamoDB
+    participant SES as Amazon SES
+
+    WS->>CH: $connect
+    CH->>EB: PutEvent ConversationStart {session_id, ip}
+    EB->>QG: Rule -> SQS (geo)
+
+    QG->>GEO: Invoke with {session_id, ip}
+    GEO->>GEOAPI: Lookup(ip)
+    GEOAPI-->>GEO: city, country, tz, zip
+    GEO->>DDB: save_user_info(session_id, details)
+
+    Note over CH: ...user chats...
+
+    WS->>CH: $disconnect
+    CH->>EB: PutEvent ConversationEnded {session_id}
+    EB->>QSUM: Rule -> SQS (summary)
+
+    QSUM->>SUM: Invoke with {session_id}
+    SUM->>DDB: get_conversation(), get_summary(), get_user_info()
+    SUM->>LLM: Summarise messages (short)
+    SUM->>SES: send_email(from, to, "Conversation Summary", body)
+```
