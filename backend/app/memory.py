@@ -6,7 +6,6 @@ from typing import List
 
 from conversation_store import ConversationStore
 from llm_provider import ChatProvider
-from types import ChatMessage
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +16,12 @@ SUMMARY_TRIGGER_TOKENS = 1_500
 def approx_tokens(text: str) -> int:
     """Crude token estimator (4chars ≈1token)."""
     return max(1, len(text) // 4)
+
+
+@dataclass
+class ChatMessage:
+    role: str  # "user" | "assistant"
+    content: str
 
 
 @dataclass
@@ -87,8 +92,8 @@ class MemoryManager:
 
         text_block = "\n".join(f"{m.role}: {m.content}" for m in to_summarise)
         summary_instruction = (
-            "Summarise the following dialogue in 3–4 sentences, "
-            "preserving key facts and decisions:\n\n" + text_block
+                "Summarise the following dialogue in 3–4 sentences, "
+                "preserving key facts and decisions:\n\n" + text_block
         )
         try:
             new_summary = self.llm.invoke(
