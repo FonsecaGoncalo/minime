@@ -35,6 +35,7 @@ export default function FlyingLogos({ className = '' }) {
     []
   );
 
+  // Precompute logo configs so they don't change on re-render
   const logoConfigs = useMemo(
     () =>
       logos.map((Icon) => {
@@ -48,9 +49,9 @@ export default function FlyingLogos({ className = '' }) {
           startY: rand(-20, 120),
           driftX: rand(15, 40) * (Math.random() < 0.5 ? -1 : 1),
           driftY: rand(10, 30) * (Math.random() < 0.5 ? -1 : 1),
-          durationX: rand(25, 50),
-          durationY: rand(30, 55),
-          delay: rand(0, 12),
+          durationX: rand(18, 35), // seconds
+          durationY: rand(20, 38), // seconds
+          delay: rand(0, 8),
           wobble: rand(2, 6)
         };
       }),
@@ -66,7 +67,8 @@ export default function FlyingLogos({ className = '' }) {
           style={{
             fontSize: cfg.size,
             color: 'white',
-            opacity: cfg.opacity
+            opacity: cfg.opacity,
+            willChange: 'transform'
           }}
           initial={{
             x: `${cfg.startX}vw`,
@@ -89,10 +91,32 @@ export default function FlyingLogos({ className = '' }) {
             scale: [1, 1 + (0.02 + cfg.depth * 0.03), 1],
           }}
           transition={{
-            x: { duration: cfg.durationX, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: cfg.delay },
-            y: { duration: cfg.durationY, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: cfg.delay * 0.7 },
-            rotate: { duration: cfg.durationX * 0.9, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' },
-            scale: { duration: cfg.durationY * 0.8, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }
+            x: {
+              duration: cfg.durationX,
+              ease: 'linear',
+              repeat: Infinity,
+              repeatType: 'mirror',
+              delay: cfg.delay
+            },
+            y: {
+              duration: cfg.durationY,
+              ease: 'linear',
+              repeat: Infinity,
+              repeatType: 'mirror',
+              delay: cfg.delay * 0.7
+            },
+            rotate: {
+              duration: cfg.durationX * 0.9,
+              ease: 'easeInOut',
+              repeat: Infinity,
+              repeatType: 'mirror'
+            },
+            scale: {
+              duration: cfg.durationY * 0.8,
+              ease: 'easeInOut',
+              repeat: Infinity,
+              repeatType: 'mirror'
+            }
           }}
         >
           <cfg.Icon />

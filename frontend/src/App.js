@@ -3,9 +3,6 @@ import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
 import SplitText from './components/SplitText';
-import FlyingLogos from './components/FlyingLogos';
-import MarkdownTypewriter from './components/MarkdownTypewriter';
-
 
 import {
     XMarkIcon,
@@ -19,6 +16,7 @@ import {
     ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
+import {AssistantBubble, UserBubble} from "./components/Bubbles";
 
 const ALL_PROMPTS = [
     {text: 'Do you enjoy working on side projects?', Icon: SparklesIcon},
@@ -31,36 +29,6 @@ const ALL_PROMPTS = [
     {text: 'Can you tell me a bit about your career journey so far?', Icon: ChartBarIcon},
 ];
 
-// --------------------- message bubbles ---------------------
-const AssistantBubble = ({text, loading}) => (
-    <div className="self-start max-w-[75%]">
-        <div
-            className={`bg-gray-800 text-gray-100 px-4 py-3 rounded-2xl text-sm shadow whitespace-pre-wrap ${loading && !text ? 'min-h-[40px] flex items-end' : ''}`}
-        >
-            {loading && !text ? (
-                <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0s]"/>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"/>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"/>
-                </div>
-            ) : (
-                <MarkdownTypewriter text={text}/>
-            )}
-        </div>
-    </div>
-);
-
-const UserBubble = ({text}) => (
-    <div className="self-end max-w-[75%]">
-        <div
-            className="inline-block bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-2xl text-sm shadow whitespace-pre-wrap"
-        >
-            {text}
-        </div>
-    </div>
-);
-
-// --------------------- main component ---------------------
 export default function App() {
     const [messages, setMessages] = useState([]);          // {role:'user'|'assistant', content:'', finished?:bool}
     const [draft, setDraft] = useState('');
@@ -141,7 +109,6 @@ export default function App() {
 
         setError(null);
 
-        // optimistic user bubble
         setMessages((prev) => [
             ...prev,
             {role: 'user', content: text},
@@ -168,7 +135,6 @@ export default function App() {
 
     return (
         <>
-            <FlyingLogos className="z-10"/>
             <main
                 className={`
             min-h-dvh w-full app-bg flex flex-col
