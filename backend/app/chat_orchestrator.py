@@ -8,7 +8,7 @@ from llm_provider import Model
 
 from memory import MemoryManager
 from prompts import build_messages
-from rag import search as rag_search, format_results
+from rag import search as rag_search, format_results, rewrite_with_history
 from tracing_utils import span, log_ctx
 from tools import scheduler, user_info
 
@@ -36,14 +36,19 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
                 top_p=0.9,
             ),
         )
+        memory_snapshot = mem.get_memory()
 
         with span("rag.search"):
-            results = rag_search(message)
+            search_query = rewrite_with_history(memory_snapshot, message)
+            logger.info(f"RAG search query: {search_query}", **log_ctx(session_id=session_id))
+            results = rag_search(search_query)
             logger.info("RAG hits: %s", len(results), **log_ctx(session_id=session_id))
         rag_block = format_results(results)
+
         messages = build_messages(
-            mem.get_memory(), rag_block, message, supports_system=chat_llm.supports_system
+            memory_snapshot, rag_block, message, supports_system=chat_llm.supports_system
         )
+
         logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
         tools = [
