@@ -2,9 +2,9 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import Mermaid from './Mermaid';
 
 import {memo} from 'react';
+import Mermaid from "./Mermaid";
 
 
 function MarkdownTypewriter({text = '', speed = 10, finished = false}) {
