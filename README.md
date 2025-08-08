@@ -10,15 +10,28 @@
 </div>
 
 ---
+Minime is an AI-powered chat assistant that lives on my personal website.
+It acts as an AI version of me — able to talk about my background, projects, and even schedule meetings through natural conversation.
 
-**Minime** is an AI chat assistant that powers my personal website. It allows visitors to
-converse with an AI version of me, ask questions about my background or projects, and even schedule
-meetings through a natural dialog. Minime combines large language model (LLM) intelligence with a serverless,
-event-driven AWS architecture, retrieval-augmented generation (RAG) from a Notion-based knowledge base, and some
-DevOps practices (IaC, CI/CD, monitoring, security scanning).
+It combines:
+- Large Language Models (LLMs) for dialogue
+- Retrieval-Augmented Generation (RAG) from my Notion knowledge base
+- A serverless, event-driven AWS architecture
+- Infrastructure as Code (Terraform)
+- CI/CD, monitoring, and security best practices
 
-System Architecture
--------------------
+## Features
+- **Conversational AI**: Streamed responses via WebSocket for a natural chat feel
+- **Personalized knowledge**: RAG retrieval from Notion content via Pinecone
+- **Meeting scheduling**: Google Calendar integration for booking calls
+- **Geolocation awareness**: Enriches user profile from IP location
+- **Email summaries**: Sends conversation summaries via SES
+- **Rate limiting**: DynamoDB-backed token bucket to protect resources (💰)
+- **Event-driven design**: AWS EventBridge + SQS orchestration
+
+
+## System Architecture
+
 <div align="center">
 
 <picture>
@@ -26,3 +39,19 @@ System Architecture
   <img alt="minime logo" src="assets/diagram.png" width="80%" height="80%">
 </picture>
 </div>
+
+### Flow:
+1. Frontend:
+   - Static site on S3 served via CloudFront
+   - Connects to backend via API Gateway (WebSocket) for low-latency streaming
+2. Chat Handling:
+   - `chat_handler` Lambda manages incoming messages, streams model output back
+   - Rate limiting and error handling built-in 
+3. Retrieval:
+   - Queries Pinecone with embeddings from Notion documents
+4. LLM Invocation:
+   - Uses Amazon Bedrock & Anthropic Claude
+5. Backend Events:
+   - EventBridge + SQS for async tasks like IP geolocation & conversation summaries
+   - Summaries emailed via SES
+   - Meetings scheduled in Google Calendar
