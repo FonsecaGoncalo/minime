@@ -79,7 +79,7 @@ def build_messages(memory: dict, rag_block: str, user_question: str, supports_sy
         if m.get("message") and m["message"].strip()
     )
 
-    hint = ""
+    fallback = ""
     if "NO_RESULTS" in rag_block:
         fallback = (
             '\nIf the answer is not covered by <docs> or history, ask follow up questions or reply exactly:\n'
