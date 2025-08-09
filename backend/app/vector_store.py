@@ -44,7 +44,7 @@ def search(query: str, top_k: int = 100) -> List[SearchResult]:
     search_payload = {"top_k": top_k, "inputs": {"text": query}}
     rerank_payload = {
         "model": "bge-reranker-v2-m3",
-        "top_n": 50,
+        "top_n": 35,
         "rank_fields": ["text"],
         "parameters": {
             "truncate": "END"
