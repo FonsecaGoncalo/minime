@@ -4,6 +4,7 @@ import logging
 from collections.abc import Callable
 
 import llm_provider
+from backend.dist.haystack.components.generators.chat import OpenAIChatGenerator
 from llm_provider import Model
 from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 from haystack.dataclasses import ChatMessage
@@ -62,7 +63,8 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
             if chunk.content:
                 on_stream(chunk.content)
 
-        llm = AnthropicChatGenerator(
+        llm = OpenAIChatGenerator(
+            model="gpt-5",
             streaming_callback=_stream_cb,
             generation_kwargs={"max_tokens": MAX_TOKENS_RESPONSE, "temperature": 0.7, "top_p": 0.9},
         )
