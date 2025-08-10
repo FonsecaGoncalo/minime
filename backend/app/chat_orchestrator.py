@@ -22,6 +22,7 @@ MAX_TOKENS_RESPONSE = 512
 
 
 def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str:
+    logger.info("inside chat: %s", message)
     with span("chat"):
         mem = MemoryManager(
             session_id=session_id,
@@ -33,6 +34,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
             ),
         )
         memory_snapshot = mem.get_memory()
+        logger.info(f"memory snapshot {memory_snapshot}")
 
         with span("rag.search"):
             search_query = rewrite_with_history(memory_snapshot, message)

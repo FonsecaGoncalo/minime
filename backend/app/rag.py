@@ -1,6 +1,10 @@
+import logging
+
 import llm_provider
 import vector_store
 from llm_provider import Model
+
+logger = logging.getLogger(__name__)
 
 REWRITE_MODEL = Model.NOVA_MICRO
 
@@ -39,9 +43,11 @@ def build_rewrite_messages(memory: dict, user_msg: str) -> list[dict[str, str]]:
     ]
 
 def rewrite_with_history(memory: dict, user_msg: str) -> str:
+    logger.info("Rewriting conversation history")
     llm = llm_provider.llm(REWRITE_MODEL, max_tokens=64, temperature=0.0, top_p=0.9)
     query = llm.invoke(build_rewrite_messages(memory, user_msg),
                        max_tokens=64, temperature=0.0, top_p=0.9)
+    logger.info(f"RAG rewrite query: {query}")
     return query.strip()[:120] or user_msg[:120]
 
 
