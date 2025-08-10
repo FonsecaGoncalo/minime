@@ -136,6 +136,7 @@ def handler(event, context):
                 logger.info("Rate limit exceeded for %s", ip)
                 return {"statusCode": 429, "body": "Rate limit exceeded"}
 
+            logger.info("chat: %s", message_text)
             chat(connection_id, message_text, on_stream=lambda chunk: outbound_messenger.message(payload=chunk))
 
             return {"statusCode": 200}
