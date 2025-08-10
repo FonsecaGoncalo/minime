@@ -7,8 +7,7 @@ rm -f requirements.txt
 
 # Install dependencies into a temporary directory
 poetry export --without-hashes --format=requirements.txt > requirements.txt
-pip install --platform manylinux2014_x86_64 \
-            --only-binary=:all: \
+pip install --only-binary=:all: \
             --implementation cp \
             --python-version 3.11 \
             --upgrade \
