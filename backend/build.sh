@@ -12,17 +12,16 @@ rm -rf dist lambda_package.zip requirements.txt
 poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 # Build inside Lambda container so wheels match the runtime
-docker run --rm -v "$PWD":/var/task -w /var/task "$LAMBDA_IMG" /bin/bash -lc "
-  set -euo pipefail
-  python -m pip install --upgrade pip
-  rm -rf dist && mkdir -p dist
-  # Install wheels into dist (Linux, correct glibc, correct ABI)
-  pip install \
-    --only-binary=:all: \
-    --upgrade \
-    --no-cache-dir \
-    -r requirements.txt -t dist/
-"
+pip install \
+  --platform manylinux2014_x86_64 \
+  --implementation cp \
+  --python-version 3.11 \
+  --abi cp311 \
+  --only-binary=:all: \
+  --upgrade \
+  --no-cache-dir \
+  -r requirements.txt -t dist/
+
 
 # Prune junk
 ROOT="dist"
