@@ -7,7 +7,11 @@ rm -f requirements.txt
 
 # Install dependencies into a temporary directory
 poetry export --without-hashes --format=requirements.txt > requirements.txt
-pip install -r requirements.txt -t dist/
+pip install --platform manylinux2014_x86_64 \
+            --only-binary=:all: \
+            --implementation cp \
+            --python 3.11 \
+            -r requirements.txt -t dist/
 
 # Remove dep
 ROOT="dist"
