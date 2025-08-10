@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
+from haystack.components.generators.chat import OpenAIChatGenerator
+
 import llm_provider
-from backend.dist.haystack.components.generators.chat import OpenAIChatGenerator
 from llm_provider import Model
-from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 from haystack.dataclasses import ChatMessage
 from haystack.tools import Tool
 
