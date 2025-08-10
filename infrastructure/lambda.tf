@@ -9,20 +9,21 @@ resource "aws_s3_object" "lambda_package" {
   bucket = aws_s3_bucket.lambda_code_bucket.id
   key    = "lambda_package.zip"
   source = "../backend/lambda_package.zip"
-  etag = filemd5("../backend/lambda_package.zip")
+  etag   = filemd5("../backend/lambda_package.zip")
 }
 
 ############
 # chat_handler
 ############
 resource "aws_lambda_function" "chat_handler" {
-  function_name = "chat_handler"
-  runtime       = "python3.11"
-  handler       = "chat_handler.handler"
-  s3_bucket     = aws_s3_bucket.lambda_code_bucket.id
-  s3_key        = aws_s3_object.lambda_package.key
+  function_name    = "chat_handler"
+  runtime          = "python3.11"
+  handler          = "chat_handler.handler"
+  s3_bucket        = aws_s3_bucket.lambda_code_bucket.id
+  s3_key           = aws_s3_object.lambda_package.key
   source_code_hash = filebase64sha256("../backend/lambda_package.zip")
-  timeout       = 180
+  timeout          = 300
+  memory_size      = 512
 
   role = aws_iam_role.lambda_exec.arn
 
@@ -58,13 +59,14 @@ resource "aws_lambda_function" "chat_handler" {
 # conversation_summary_handler
 ############
 resource "aws_lambda_function" "conversation_summary_handler" {
-  function_name = "conversation_summary_handler"
-  runtime       = "python3.11"
-  handler       = "conversation_summary_handler.handler"
-  s3_bucket     = aws_s3_bucket.lambda_code_bucket.id
-  s3_key        = aws_s3_object.lambda_package.key
+  function_name    = "conversation_summary_handler"
+  runtime          = "python3.11"
+  handler          = "conversation_summary_handler.handler"
+  s3_bucket        = aws_s3_bucket.lambda_code_bucket.id
+  s3_key           = aws_s3_object.lambda_package.key
   source_code_hash = filebase64sha256("../backend/lambda_package.zip")
-  timeout       = 180
+  timeout          = 300
+  memory_size      = 512
 
   role = aws_iam_role.lambda_exec.arn
 
@@ -96,13 +98,14 @@ resource "aws_lambda_function" "conversation_summary_handler" {
 # ip_geolocation_handler
 ############
 resource "aws_lambda_function" "ip_geolocation_handler" {
-  function_name = "ip_geolocation_handler"
-  runtime       = "python3.11"
-  handler       = "ip_geolocation_handler.handler"
-  s3_bucket     = aws_s3_bucket.lambda_code_bucket.id
-  s3_key        = aws_s3_object.lambda_package.key
+  function_name    = "ip_geolocation_handler"
+  runtime          = "python3.11"
+  handler          = "ip_geolocation_handler.handler"
+  s3_bucket        = aws_s3_bucket.lambda_code_bucket.id
+  s3_key           = aws_s3_object.lambda_package.key
   source_code_hash = filebase64sha256("../backend/lambda_package.zip")
-  timeout       = 180
+  timeout          = 300
+  memory_size      = 512
 
   role = aws_iam_role.lambda_exec.arn
 
