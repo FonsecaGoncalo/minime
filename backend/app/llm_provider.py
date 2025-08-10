@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -116,7 +117,10 @@ class BedrockProvider(ChatProvider):
             }
             if system_block is not None:
                 params["system"] = system_block
+
+            logger.info(f"Bedrock request: {json.dumps(params)}")
             resp = self.client.converse(**params)
+            logger.info(f"Bedrock response: {json.dumps(resp)}")
             return resp["output"]["message"]["content"][0]["text"].strip()
         except (ClientError, Exception) as err:
             logger.error("Bedrock invoke failed: %s", err)
