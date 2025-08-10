@@ -1,35 +1,41 @@
-#!/usr/bin/env sh
-set -eux
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Clean previous builds
-rm -rf dist package.zip
-rm -f requirements.txt
+ARCH="${ARCH:-x86_64}"   # or aarch64
+PYVER=3.11
+LAMBDA_IMG="public.ecr.aws/lambda/python:${PYVER}"
 
-# Install dependencies into a temporary directory
+# Clean
+rm -rf dist lambda_package.zip requirements.txt
+
+# Export requirements
 poetry export --without-hashes --format=requirements.txt > requirements.txt
-pip install --only-binary=:all: \
-            --implementation cp \
-            --python-version 3.11 \
-            --upgrade \
-            --no-cache-dir \
-            -r requirements.txt -t dist/
-# Remove dep
-ROOT="dist"
 
+# Build inside Lambda container so wheels match the runtime
+docker run --rm -v "$PWD":/var/task -w /var/task "$LAMBDA_IMG" /bin/bash -lc "
+  set -euo pipefail
+  python -m pip install --upgrade pip
+  rm -rf dist && mkdir -p dist
+  # Install wheels into dist (Linux, correct glibc, correct ABI)
+  pip install \
+    --only-binary=:all: \
+    --upgrade \
+    --no-cache-dir \
+    -r requirements.txt -t dist/
+"
+
+# Prune junk
+ROOT="dist"
 find "$ROOT" -type d -name "__pycache__" -prune -exec rm -rf {} +
 find "$ROOT" -type d -name ".pytest_cache" -prune -exec rm -rf {} +
 find "$ROOT" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
-
 find "$ROOT" -type d \( -name "tests" -o -name "test" -o -name "testing" -o -name "examples" \) -prune -exec rm -rf {} +
-
 find "$ROOT" -path "*/googleapiclient/discovery_cache" -type d -prune -exec rm -rf {} +
-
 find "$ROOT" -maxdepth 2 -type f -name "*.whl" -delete
 
-# Copy source code into the dist directory
-cp -r -v app/* dist
+# Copy your code
+cp -rv app/* dist/
 
-# Create ZIP package for Lambda
-cd dist && zip -r ../lambda_package.zip . && cd ..
-
-echo "Lambda package created as lambda_package.zip"
+# Zip
+cd dist && zip -r ../lambda_package.zip . && cd -
+echo 'Lambda package created as lambda_package.zip'
