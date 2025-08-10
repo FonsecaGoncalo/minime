@@ -5,6 +5,9 @@ from collections.abc import Callable
 
 import llm_provider
 from llm_provider import Model
+from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
+from haystack.dataclasses import ChatMessage
+from haystack.tools import Tool
 
 from memory import MemoryManager
 from prompts import build_messages
@@ -15,18 +18,11 @@ from tools import scheduler, user_info
 logger = logging.getLogger(__name__)
 
 SUMMARIZATION_MODEL = Model.NOVA_MICRO
-MODEL = Model.ANTHROPIC_SONNET
 MAX_TOKENS_RESPONSE = 512
 
 
 def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str:
     with span("chat"):
-        chat_llm = llm_provider.llm(
-            MODEL,
-            max_tokens=MAX_TOKENS_RESPONSE,
-            temperature=0.7,
-            top_p=0.9,
-        )
         mem = MemoryManager(
             session_id=session_id,
             llm=llm_provider.llm(
@@ -46,79 +42,105 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
         rag_block = format_results(results)
 
         messages = build_messages(
-            memory_snapshot, rag_block, message, supports_system=chat_llm.supports_system
+            memory_snapshot, rag_block, message, supports_system=True
         )
 
         logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
-        tools = [
-            {
-                "name": "schedule_meeting",
-                "description": "Schedule a meeting via google calendar",
-                "input_schema": {
-                    "type": "object",
-                    "properties": {
-                        "start_time": {"type": "string", "format": "date-time"},
-                        "duration_minutes": {"type": "integer"},
-                        "summary": {"type": "string"},
-                        "email": {"type": "string"},
-                    },
-                    "required": ["start_time", "duration_minutes", "summary", "email"],
-                },
-            },
-            {
-                "name": "update_user_info",
-                "description": "Store the user's name, company or role for future reference",
-                "input_schema": {
-                    "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "company": {"type": "string"},
-                        "role": {"type": "string"},
-                    },
-                },
-            },
-        ]
+        chat_messages = []
+        for m in messages:
+            if m["role"] == "system":
+                chat_messages.append(ChatMessage.from_system(m["content"]))
+            elif m["role"] == "user":
+                chat_messages.append(ChatMessage.from_user(m["content"]))
+            else:
+                chat_messages.append(ChatMessage.from_assistant(m["content"]))
 
-        with span("llm.stream"):
-            response = chat_llm.stream(
-                messages,
-                on_stream=on_stream,
-                max_tokens=MAX_TOKENS_RESPONSE,
-                temperature=0.7,
-                top_p=0.9,
-                tools=tools,
-            )
+        def _stream_cb(chunk):
+            if chunk.content:
+                on_stream(chunk.content)
 
-        while response.stop_reason == "tool_use":
-            blocks = list(response.content)
-            tool_calls = [b for b in blocks if getattr(b, "type", "") == "tool_use"]
-            tool_results = []
-            for call in tool_calls:
-                if call.name == "schedule_meeting":
-                    result = scheduler.call(call, on_stream, mem, message)
-                    if result is None:
-                        return "tool_error"
-                    tool_results.append(result)
-                elif call.name == "update_user_info":
-                    tool_results.append(user_info.call(call, mem))
-
-            messages.append({"role": "assistant", "content": [c.model_dump() for c in blocks]})
-            messages.append({"role": "user", "content": tool_results})
-
-            with span("llm.stream.followup"):
-                response = chat_llm.stream(
-                    messages,
-                    on_stream=on_stream,
-                    max_tokens=MAX_TOKENS_RESPONSE,
-                    temperature=0.7,
-                    top_p=0.9,
-                    tools=tools,
-                )
-
-        text = "".join(
-            b.text for b in response.content if getattr(b, "type", "") == "text"
+        llm = AnthropicChatGenerator(
+            streaming_callback=_stream_cb,
+            generation_kwargs={"max_tokens": MAX_TOKENS_RESPONSE, "temperature": 0.7, "top_p": 0.9},
         )
-        mem.save_turn(user_msg=message, assistant_msg=text)
-        logger.info("Messages sent: %s", text, **log_ctx(session_id=session_id))
-        return text
+
+        class _Call:
+            def __init__(self, args):
+                self.id = None
+                self.input = args
+
+        def _schedule_tool(start_time: str, duration_minutes: int, summary: str, email: str) -> str:
+            call = _Call(
+                {
+                    "start_time": start_time,
+                    "duration_minutes": duration_minutes,
+                    "summary": summary,
+                    "email": email,
+                }
+            )
+            result = scheduler.call(call, on_stream, mem, message)
+            if result is None:
+                raise RuntimeError("tool_error")
+            return result["content"][0]["text"]
+
+        def _update_user_info_tool(name: str | None = None, company: str | None = None, role: str | None = None) -> str:
+            call = _Call({"name": name, "company": company, "role": role})
+            result = user_info.call(call, mem)
+            return result["content"][0]["text"]
+
+        schedule_tool = Tool(
+            name="schedule_meeting",
+            description="Schedule a meeting via google calendar",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "start_time": {"type": "string", "format": "date-time"},
+                    "duration_minutes": {"type": "integer"},
+                    "summary": {"type": "string"},
+                    "email": {"type": "string"},
+                },
+                "required": ["start_time", "duration_minutes", "summary", "email"],
+            },
+            function=_schedule_tool,
+        )
+
+        update_tool = Tool(
+            name="update_user_info",
+            description="Store the user's name, company or role for future reference",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "company": {"type": "string"},
+                    "role": {"type": "string"},
+                },
+            },
+            function=_update_user_info_tool,
+        )
+
+        tools = {t.name: t for t in [schedule_tool, update_tool]}
+
+        while True:
+            with span("llm.run"):
+                response = llm.run(chat_messages, tools=list(tools.values()))
+
+            reply = response["replies"][0]
+            if reply.tool_calls:
+                tool_msgs = []
+                for tc in reply.tool_calls:
+                    tool = tools.get(tc.tool_name)
+                    if not tool:
+                        continue
+                    try:
+                        res_text = tool.invoke(**tc.arguments)
+                    except Exception:
+                        res_text = "tool_error"
+                    tool_msgs.append(ChatMessage.from_tool(res_text, origin=tc))
+                chat_messages.append(reply)
+                chat_messages.extend(tool_msgs)
+            else:
+                text = reply.text or ""
+                mem.save_turn(user_msg=message, assistant_msg=text)
+                logger.info("Messages sent: %s", text, **log_ctx(session_id=session_id))
+                return text
