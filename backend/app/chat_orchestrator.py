@@ -63,6 +63,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
             if chunk.content:
                 on_stream(chunk.content)
 
+        logger.info("Create client")
         llm = OpenAIChatGenerator(
             model="gpt-5",
             streaming_callback=_stream_cb,
@@ -127,6 +128,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 
         while True:
             with span("llm.run"):
+                logger.info("llm.run")
                 response = llm.run(chat_messages, tools=list(tools.values()))
 
             reply = response["replies"][0]
