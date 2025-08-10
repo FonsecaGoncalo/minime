@@ -37,6 +37,7 @@ resource "aws_lambda_function" "chat_handler" {
       NOTION_DB_ID                                     = var.notion_db_id
       PINECONE_API_KEY                                 = var.pinecone_api_key
       ANTHROPIC_API_KEY                                = var.anthropic_api_key
+      OPENAI_API_KEY                                   = var.openai_api_key
       GOOGLE_SERVICE_ACCOUNT                           = var.google_service_account
       SES_TO_EMAIL                                     = var.ses_to_email
       EVENT_BUS_NAME                                   = var.event_bus_name

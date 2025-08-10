@@ -23,6 +23,11 @@ variable "anthropic_api_key" {
   sensitive = true
 }
 
+variable "openai_api_key" {
+  type      = string
+  sensitive = true
+}
+
 variable "newrelic_license_key" {
   type      = string
   sensitive = true
