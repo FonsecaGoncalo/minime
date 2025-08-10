@@ -49,6 +49,7 @@ resource "aws_lambda_function" "chat_handler" {
       AWS_LAMBDA_EXEC_WRAPPER                          = "/opt/otel-instrument"
       ENABLE_FS_INSTRUMENTATION                        = false
       OTEL_PYTHON_DISABLED_INSTRUMENTATIONS            = "pymongo,pymysql,pyramid,redis,sqlalchemy,starlette,tornado,flask,grpc,jinja2,mysql,psycopg2,pymemcache"
+      HAYSTACK_TELEMETRY_ENABLED                       = "False"
     }
   }
 }
@@ -86,6 +87,7 @@ resource "aws_lambda_function" "conversation_summary_handler" {
       AWS_LAMBDA_EXEC_WRAPPER                          = "/opt/otel-instrument"
       ENABLE_FS_INSTRUMENTATION                        = false
       OTEL_PYTHON_DISABLED_INSTRUMENTATIONS            = "pymongo,pymysql,pyramid,redis,sqlalchemy,starlette,tornado,flask,grpc,jinja2,mysql,psycopg2,pymemcache"
+      HAYSTACK_TELEMETRY_ENABLED                       = "False"
     }
   }
 }
@@ -120,6 +122,7 @@ resource "aws_lambda_function" "ip_geolocation_handler" {
       AWS_LAMBDA_EXEC_WRAPPER                          = "/opt/otel-instrument"
       ENABLE_FS_INSTRUMENTATION                        = false
       OTEL_PYTHON_DISABLED_INSTRUMENTATIONS            = "pymongo,pymysql,pyramid,redis,sqlalchemy,starlette,tornado,flask,grpc,jinja2,mysql,psycopg2,pymemcache"
+      HAYSTACK_TELEMETRY_ENABLED                       = "False"
     }
   }
 }
