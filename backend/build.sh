@@ -10,14 +10,17 @@ poetry export --without-hashes --format=requirements.txt > requirements.txt
 pip install -r requirements.txt -t dist/
 
 # Remove dep
-find dist -path "*/googleapiclient/discovery_cache" -type d -exec rm -rf {} +
-find dist -type d -name "__pycache__" -exec rm -rf {} +
-find dist -type d \( -name "tests" -o -name "test" -o -name "testing" -o -name "examples" \) -exec rm -rf {} +
-find dist -type d -name ".pytest_cache" -exec rm -rf {} +
-find dist -type f \( -name "*.pyc" -o -name "*.pyo" -o -name "*.whl" \) -delete
-find dist -type d -name "discovery_cache" -exec rm -rf {} +
-find dist -type f \( -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" \) -delete
+ROOT="dist"
 
+find "$ROOT" -type d -name "__pycache__" -prune -exec rm -rf {} +
+find "$ROOT" -type d -name ".pytest_cache" -prune -exec rm -rf {} +
+find "$ROOT" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
+
+find "$ROOT" -type d \( -name "tests" -o -name "test" -o -name "testing" -o -name "examples" \) -prune -exec rm -rf {} +
+
+find "$ROOT" -path "*/googleapiclient/discovery_cache" -type d -prune -exec rm -rf {} +
+
+find "$ROOT" -maxdepth 2 -type f -name "*.whl" -delete
 
 # Copy source code into the dist directory
 cp -r -v app/* dist
