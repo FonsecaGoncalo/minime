@@ -67,6 +67,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
         llm = OpenAIChatGenerator(
             model="gpt-5",
             streaming_callback=_stream_cb,
+            generation_kwargs={"reasoning_effort": "low"},
             # generation_kwargs={"temperature": 0.7, "top_p": 0.9},
         )
 
