@@ -9,27 +9,23 @@ from google_calendar import schedule_meeting
 logger = logging.getLogger(__name__)
 
 
-class ScheduleMeeting:
-
-    @tool(
-        name="schedule_meeting",
-        description="Schedule a meeting via google calendar",
-    )
-    def __call__(self: "ScheduleMeeting",
-                 start_time: Annotated[datetime, "Meeting start time"],
-                 duration: Annotated[int, "Meeting Duration in minutes"],
-                 summary: Annotated[str, "Meeting summary"],
-                 email: Annotated[str, "Attendee email"]):
-        try:
-            meeting_link = schedule_meeting(
-                start_time=start_time,
-                duration_minutes=duration,
-                summary=summary,
-                email=email)
-            return {
-                "link": meeting_link,
-            }
-        except Exception as e:
-            logger.error(e)
-            return "Failed to schedule meeting."
-
+@tool(
+    name="schedule_meeting",
+    description="Schedule a meeting via google calendar",
+)
+def schedule_meeting(start_time: Annotated[str, "ISO 8601 date-time, e.g., 2025-08-11T14:00:00Z"],
+                     duration: Annotated[int, "Meeting Duration in minutes"],
+                     summary: Annotated[str, "Meeting summary"],
+                     email: Annotated[str, "Attendee email"]):
+    try:
+        meeting_link = schedule_meeting(
+            start_time=datetime.fromisoformat(start_time),
+            duration_minutes=duration,
+            summary=summary,
+            email=email)
+        return {
+            "link": meeting_link,
+        }
+    except Exception as e:
+        logger.error(e)
+        return "Failed to schedule meeting."

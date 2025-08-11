@@ -12,8 +12,8 @@ from llm_provider import Model
 from memory import MemoryManager
 from prompts import build_messages
 from rag import search as rag_search, format_results, rewrite_with_history
-from tools.scheduler import ScheduleMeeting
-from tools.user_info import UpdateUserInfo
+from tools.scheduler import schedule_meeting
+from tools.user_info import make_update_user_info_tool
 from tracing_utils import span, log_ctx
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 
         result = Agent(
             chat_generator=llm,
-            tools=[UpdateUserInfo(mem), ScheduleMeeting()]
+            tools=[make_update_user_info_tool(mem), schedule_meeting]
         ).run(messages=chat_messages)
 
         assistant_response = result["messages"][-1].text
