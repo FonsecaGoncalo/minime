@@ -15,7 +15,7 @@ class ScheduleMeeting:
         name="schedule_meeting",
         description="Schedule a meeting via google calendar",
     )
-    def __call__(self,
+    def __call__(self: "ScheduleMeeting",
                  start_time: Annotated[datetime, "Meeting start time"],
                  duration: Annotated[int, "Meeting Duration in minutes"],
                  summary: Annotated[str, "Meeting summary"],

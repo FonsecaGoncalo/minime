@@ -17,7 +17,7 @@ class UpdateUserInfo:
         description="Store user info in memory"
     )
     def __call__(
-            self,
+            self: "UpdateUserInfo",
             name: Annotated[str, "User name"],
             company: Annotated[str, "Company name"],
             role: Annotated[str, "Role name"],
