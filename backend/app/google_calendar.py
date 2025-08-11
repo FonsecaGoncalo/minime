@@ -30,7 +30,7 @@ def schedule_meeting(start_time: datetime, duration_minutes: int, summary: str, 
             service_account_info, scopes=SCOPES
         ).with_subject(os.environ.get("SES_TO_EMAIL"))
 
-        service = build("calendar", "v3", credentials=creds)
+        service = build("calendar", "v3", credentials=creds, cache_discovery=False)
 
         end_time = start_time + timedelta(minutes=duration_minutes)
         event_body = {
