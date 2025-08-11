@@ -84,12 +84,10 @@ jobs:
       - name: Read Terraform output
         id: tf
         run: |
-          ## grab only the first line (the real bucket name)
                bucket_name=$(terraform output -raw bucket_name 2>/dev/null)
                cd_dist_id=$(terraform output -raw cd_dist_id 2>/dev/null)
 
 
-          ## now append clean KEY=VALUE lines to GITHUB_ENV
                echo "BUCKET_NAME=${bucket_name}" >> $GITHUB_ENV
                echo "CF_DIST_ID=${cd_dist_id}" >> $GITHUB_ENV
 
