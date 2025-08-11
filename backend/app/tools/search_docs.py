@@ -14,19 +14,17 @@ def make_search_docs(session_id, memory_snapshot):
             query: Annotated[str, "Query to Search"],
     ) -> str:
         rag_pipeline = Pipeline()
-        rag_pipeline.add_component("rag_query_retriever", RagQueryRewriter())
+        rag_pipeline.add_component("rag_query_rewriter", RagQueryRewriter())
         rag_pipeline.add_component("pinecone_retriever", PineconeRetriever())
-        rag_pipeline.connect("rag_query_retriever", "pinecone_retriever")
+        rag_pipeline.connect("rag_query_rewriter", "pinecone_retriever")
         return rag_pipeline.run(
             data={
-                "rag_query_retriever": {
+                "rag_query_rewriter": {
                     "memory_snapshot": memory_snapshot,
                     "session_id": session_id,
                     "message": query
                 },
                 "pinecone_retriever": {
-                    "search_query": query,
-                    "session_id": session_id,
                     "top_k": 40,
                     "top_n": 20,
                 }
