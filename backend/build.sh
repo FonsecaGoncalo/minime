@@ -29,7 +29,7 @@ find "$ROOT" -type d -name "__pycache__" -prune -exec rm -rf {} +
 find "$ROOT" -type d -name ".pytest_cache" -prune -exec rm -rf {} +
 find "$ROOT" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
 find "$ROOT" -type d \( -name "tests" -o -name "test" -o -name "testing" -o -name "examples" \) -prune -exec rm -rf {} +
-find "$ROOT" -path "*/googleapiclient/discovery_cache" -type d -prune -exec rm -rf {} +
+find "$ROOT" -path "*/googleapiclient/discovery_cache/documents" -type d -prune -exec rm -rf {} +
 find "$ROOT" -maxdepth 2 -type f -name "*.whl" -delete
 
 # Copy your code

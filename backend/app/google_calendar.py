@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from tracing import tracer
 
@@ -44,6 +45,12 @@ def schedule_meeting(start_time: datetime, duration_minutes: int, summary: str, 
                 "timeZone": "UTC",
             },
             "attendees": [{"email": email}],
+            "conferenceData": {
+                "createRequest": {
+                    "requestId": str(uuid4()),
+                    "conferenceSolutionKey": {"type": "hangoutsMeet"},
+                }
+            },
         }
 
         logger.info(event_body)
