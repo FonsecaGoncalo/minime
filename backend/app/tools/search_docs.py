@@ -31,6 +31,6 @@ def make_search_docs(session_id, memory_snapshot):
                     "top_k": 40,
                     "top_n": 20,
                 }
-            })["documents"]
+            })["pinecone_retriever"]["documents"]
 
     return search_docs
