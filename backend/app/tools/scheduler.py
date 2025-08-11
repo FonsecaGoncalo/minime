@@ -16,7 +16,7 @@ def call(call, on_stream, mem, user_msg):
             call.input["email"],
         )
     except Exception as e:
-        logger.error("Failed to schedule meeting: %s", e, **log_ctx(session_id=mem.session_id))
+        logger.error("Failed to schedule meeting: %s", e, **log_ctx(session_id=mem.session_id), exc_info=e)
         error_text = (
             "Sorry, something went wrong while scheduling the meeting. "
             "Please contact the real Gonçalo to arrange it."
