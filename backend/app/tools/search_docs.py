@@ -31,3 +31,5 @@ def make_search_docs(session_id, memory_snapshot):
                     "top_n": 20,
                 }
             })["documents"]
+
+    return search_docs
