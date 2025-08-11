@@ -25,6 +25,7 @@ def make_search_docs(session_id, memory_snapshot):
                     "message": query
                 },
                 "pinecone_retriever": {
+                    "search_query": query,
                     "memory_snapshot": memory_snapshot,
                     "session_id": session_id,
                     "top_k": 40,
