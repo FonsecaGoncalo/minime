@@ -10,8 +10,8 @@ from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
-SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT")  # JSON string
-IMPERS_USER = os.environ.get("SES_TO_EMAIL")  # user to impersonate (domain-wide delegation)
+SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT")
+IMPERS_USER = os.environ.get("SES_TO_EMAIL")
 CALENDAR_ID = os.environ.get("GOOGLE_CALENDAR_ID", "primary")
 
 logger = logging.getLogger(__name__)

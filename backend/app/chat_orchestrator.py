@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
+from haystack.components.agents import Agent
 from haystack.components.generators.chat import OpenAIChatGenerator
+from haystack_integrations.components.generators.anthropic.chat import chat_generator
 
 import llm_provider
 from llm_provider import Model
@@ -127,27 +129,38 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 
         tools = {t.name: t for t in [schedule_tool, update_tool]}
 
-        while True:
-            with span("llm.run"):
-                logger.info("llm.run")
-                response = llm.run(chat_messages, tools=list(tools.values()))
 
-            reply = response["replies"][0]
-            if reply.tool_calls:
-                tool_msgs = []
-                for tc in reply.tool_calls:
-                    tool = tools.get(tc.tool_name)
-                    if not tool:
-                        continue
-                    try:
-                        res_text = tool.invoke(**tc.arguments)
-                    except Exception:
-                        res_text = "tool_error"
-                    tool_msgs.append(ChatMessage.from_tool(res_text, origin=tc))
-                chat_messages.append(reply)
-                chat_messages.extend(tool_msgs)
-            else:
-                text = reply.text or ""
-                mem.save_turn(user_msg=message, assistant_msg=text)
-                logger.info("Messages sent: %s", text, **log_ctx(session_id=session_id))
-                return text
+        result = Agent(
+            chat_generator=llm,
+            tools=[update_tool, schedule_tool]
+        ).run(messages=chat_messages)
+
+        assistant_response = result["messages"][-1].text
+        mem.save_turn(user_msg=message, assistant_msg=assistant_response)
+        logger.info("Messages sent: %s", assistant_response, **log_ctx(session_id=session_id))
+
+        return assistant_response
+        # while True:
+        #     with span("llm.run"):
+        #         logger.info("llm.run")
+        #         response = llm.run(chat_messages, tools=list(tools.values()))
+        #
+        #     reply = response["replies"][0]
+        #     if reply.tool_calls:
+        #         tool_msgs = []
+        #         for tc in reply.tool_calls:
+        #             tool = tools.get(tc.tool_name)
+        #             if not tool:
+        #                 continue
+        #             try:
+        #                 res_text = tool.invoke(**tc.arguments)
+        #             except Exception:
+        #                 res_text = "tool_error"
+        #             tool_msgs.append(ChatMessage.from_tool(res_text, origin=tc))
+        #         chat_messages.append(reply)
+        #         chat_messages.extend(tool_msgs)
+        #     else:
+        #         text = reply.text or ""
+        #         mem.save_turn(user_msg=message, assistant_msg=text)
+        #         logger.info("Messages sent: %s", text, **log_ctx(session_id=session_id))
+        #         return text
