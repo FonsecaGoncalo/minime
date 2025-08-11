@@ -1,26 +1,30 @@
 import logging
+from typing import Annotated
+
+from haystack.tools import tool
 
 from conversation_store import UserInfo
-from tracing_utils import log_ctx
 
 logger = logging.getLogger(__name__)
 
 
-def call(call, mem):
-    try:
-        mem.store.save_user_info(
-            UserInfo(
-                name=call.input.get("name"),
-                company=call.input.get("company"),
-                role=call.input.get("role"),
-            )
-        )
-        status = "ok"
-    except Exception as e:
-        logger.error("Failed to store user info: %s", e, **log_ctx(session_id=mem.session_id))
-        status = "error"
-    return {
-        "type": "tool_result",
-        "tool_use_id": call.id,
-        "content": [{"type": "text", "text": status}],
-    }
+class UpdateUserInfo:
+    def __init__(self, mem):
+        self.mem = mem
+
+    @tool(
+        name="update_user_info",
+        description="Store user info in memory"
+    )
+    def __call__(
+            self,
+            name: Annotated[str, "User name"],
+            company: Annotated[str, "Company name"],
+            role: Annotated[str, "Role name"],
+    ) -> str:
+        try:
+            self.mem.store.save_user_info(UserInfo(name=name, company=company, role=role))
+            return "ok"
+        except Exception as e:
+            logger.error(e)
+            return "error"
