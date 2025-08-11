@@ -2,6 +2,8 @@ import logging
 import os
 from typing import TypedDict, List
 
+from haystack_integrations.components.retrievers.pinecone import PineconeEmbeddingRetriever
+from haystack_integrations.document_stores.pinecone import PineconeDocumentStore
 from pinecone import Pinecone
 from pinecone.db_data import _Index as Index
 
@@ -40,11 +42,11 @@ def get_or_create_index(index_name: str) -> Index:
 index = get_or_create_index(INDEX_NAME)
 
 
-def search(query: str, top_k: int = 100) -> List[SearchResult]:
+def search(query: str, top_k: int = 100, top_n=35) -> List[SearchResult]:
     search_payload = {"top_k": top_k, "inputs": {"text": query}}
     rerank_payload = {
         "model": "bge-reranker-v2-m3",
-        "top_n": 35,
+        "top_n": top_n,
         "rank_fields": ["text"],
         "parameters": {
             "truncate": "END"

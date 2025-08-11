@@ -3,6 +3,7 @@ import logging
 import llm_provider
 import vector_store
 from llm_provider import Model
+from vector_store import SearchResult
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +52,8 @@ def rewrite_with_history(memory: dict, user_msg: str) -> str:
     return query.strip()[:120] or user_msg[:120]
 
 
-def search(query: str):
-    return vector_store.search(query)
+def search(query: str, top_k: int = 100, top_n=35) -> list[SearchResult]:
+    return vector_store.search(query, top_k, top_n)
 
 
 def format_results(results):
