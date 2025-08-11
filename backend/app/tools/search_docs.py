@@ -16,7 +16,9 @@ def make_search_docs(session_id, memory_snapshot):
         rag_pipeline = Pipeline()
         rag_pipeline.add_component("rag_query_rewriter", RagQueryRewriter())
         rag_pipeline.add_component("pinecone_retriever", PineconeRetriever())
-        rag_pipeline.connect("rag_query_rewriter", "pinecone_retriever")
+
+        rag_pipeline.connect("rag_query_rewriter.search_query", "pinecone_retriever.search_query")
+
         return rag_pipeline.run(
             data={
                 "rag_query_rewriter": {
