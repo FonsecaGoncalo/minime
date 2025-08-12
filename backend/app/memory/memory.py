@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import List
 
-from conversation_store import ConversationStore
+from memory.conversation_store import ConversationStore
 from llm_provider import ChatProvider
 
 logger = logging.getLogger(__name__)
