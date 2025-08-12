@@ -83,26 +83,19 @@ Trigger when the user asks to meet or shows intent (e.g., "can we chat?", "book 
 """
 
 
-def build_messages(memory: dict, user_question: str) -> list[dict[str, str]]:
-    messages: list[dict[str, str]] = []
+def system_prompt(memory: dict):
+    prompt = SYSTEM_PROMPT
 
-    system_prefix = memory["summary"].strip()
-    if system_prefix:
-        system_prefix += "\n\n"
-    system_content = f"{system_prefix}{SYSTEM_PROMPT}"
-    messages.append({"role": "system", "content": system_content})
+    summary = memory["summary"].strip()
+    if summary:
+        prompt = f"{prompt} \n\n [Past Convo Summary]{summary}"
 
-    messages.extend(
-        {"role": m["role"], "content": m["message"]}
-        for m in memory["conversation"]
-        if m.get("message") and m["message"].strip()
-    )
+    return prompt
 
-    user_text = (
+
+def llm_prompt(user_message: str):
+    return (
         "Using ONLY <docs> and prior conversation, answer as **Gonçalo**.\n"
         "Answer the latest user message directly. Do not reintroduce prior stories unless asked.\n"
-        f"Question: {user_question}"
+        f"Question: {user_message}"
     )
-    messages.append({"role": "user", "content": user_text})
-
-    return messages

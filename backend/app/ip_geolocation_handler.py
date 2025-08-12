@@ -2,7 +2,7 @@ import json
 import logging
 
 from memory.conversation_store import ConversationStore, UserInfo
-from utils import ip_geolocation
+from services import ip_geolocation
 from tracing import init_tracing, tracer
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ import os
 from memory.conversation_store import ConversationStore
 import llm_provider
 from llm_provider import Model
-from utils import email
+from services import email
 from tracing import init_tracing, tracer
 
 logger = logging.getLogger(__name__)

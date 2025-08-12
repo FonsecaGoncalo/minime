@@ -10,7 +10,7 @@ from haystack_integrations.components.generators.anthropic import AnthropicChatG
 import llm_provider
 from llm_provider import Model
 from memory.memory import MemoryManager
-from agents.prompts import build_messages
+import agents.prompts as prompts
 from tools import time
 from tools.scheduler import schedule_meeting
 from tools.search_docs import make_search_docs
@@ -37,22 +37,20 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
     memory_snapshot = mem.get_memory()
     logger.info(f"memory snapshot {memory_snapshot}")
 
-    messages = _map_messages(build_messages(
-        memory_snapshot, message
-    ))
+    messages = _map_messages(memory_snapshot["conversation"])
+    messages.append((ChatMessage.from_user(prompts.llm_prompt(message))))
 
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
     llm = AnthropicChatGenerator(
         model="claude-sonnet-4-20250514",
         streaming_callback=lambda chunk: on_stream(chunk.content) if chunk.content else None,
-        # generation_kwargs={"reasoning_effort": "minimal"},
-        # tools=[make_update_user_info_tool(mem), schedule_meeting]
         generation_kwargs={"temperature": 0.7, "top_p": 0.9},
     )
 
     result = Agent(
         chat_generator=llm,
+        system_prompt=prompts.system_prompt(memory_snapshot),
         tools=[
             make_update_user_info_tool(mem),
             schedule_meeting,
@@ -71,9 +69,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 def _map_messages(messages):
     chat_messages = []
     for m in messages:
-        if m["role"] == "system":
-            chat_messages.append(ChatMessage.from_system(m["content"]))
-        elif m["role"] == "user":
+        if m["role"] == "user":
             chat_messages.append(ChatMessage.from_user(m["content"]))
         else:
             chat_messages.append(ChatMessage.from_assistant(m["content"]))

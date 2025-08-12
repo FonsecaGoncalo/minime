@@ -4,7 +4,8 @@ from queue import SimpleQueue
 from threading import Thread
 from typing import TypedDict
 
-from utils import notifications, error_messages
+from utils import error_messages
+from services import notifications
 from tracing import init_tracing, tracer
 from rate_limiter.token_bucket import TokenBucket, TokenBucketConfig
 
