@@ -64,7 +64,7 @@ def _map_messages(messages):
     chat_messages = []
     for m in messages:
         if m["role"] == "user":
-            chat_messages.append(ChatMessage.from_user(m["content"]))
+            chat_messages.append(ChatMessage.from_user(m["message"]))
         else:
-            chat_messages.append(ChatMessage.from_assistant(m["content"]))
+            chat_messages.append(ChatMessage.from_assistant(m["message"]))
     return chat_messages
