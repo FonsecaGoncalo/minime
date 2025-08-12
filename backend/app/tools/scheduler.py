@@ -4,7 +4,7 @@ from typing import Annotated
 
 from haystack.tools import tool
 
-from google_calendar import schedule_meeting
+import google_calendar
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def schedule_meeting(start_time: Annotated[str, "ISO 8601 date-time, e.g., 2025-
                      summary: Annotated[str, "Meeting summary"],
                      email: Annotated[str, "Attendee email"]):
     try:
-        meeting_link = schedule_meeting(
+        meeting_link = google_calendar.schedule_meeting(
             start_time=datetime.fromisoformat(start_time),
             duration_minutes=duration,
             summary=summary,
