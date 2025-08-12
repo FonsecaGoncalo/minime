@@ -4,8 +4,8 @@ import logging
 from collections.abc import Callable
 
 from haystack.components.agents import Agent
-from haystack.components.generators.chat import OpenAIChatGenerator
 from haystack.dataclasses import ChatMessage
+from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 
 import llm_provider
 from llm_provider import Model
@@ -43,12 +43,12 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
-    llm = OpenAIChatGenerator(
-        model="gpt-5",
+    llm = AnthropicChatGenerator(
+        model="claude-sonnet-4-20250514",
         streaming_callback=lambda chunk: on_stream(chunk.content) if chunk.content else None,
-        generation_kwargs={"reasoning_effort": "minimal"},
+        # generation_kwargs={"reasoning_effort": "minimal"},
         # tools=[make_update_user_info_tool(mem), schedule_meeting]
-        # generation_kwargs={"temperature": 0.7, "top_p": 0.9},
+        generation_kwargs={"temperature": 0.7, "top_p": 0.9},
     )
 
     result = Agent(

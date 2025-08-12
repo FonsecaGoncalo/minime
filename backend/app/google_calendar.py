@@ -60,7 +60,7 @@ def schedule_meeting(
             "event_id": <event id>
         }
     """
-    logger.info("Creating Google Calendar event (Meet enabled)")
+    logger.info("Creating Google Calendar event, {}, {}, {}".format(start_time, duration_minutes, summary))
     with tracer.start_as_current_span("schedule_meeting"):
         authed = _authorized_session()
 

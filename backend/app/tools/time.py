@@ -1,9 +1,11 @@
+import logging
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 from haystack.tools import tool
 from typing import Annotated
 
+logger = logging.getLogger(__name__)
 
 def _to_iso(dt: datetime) -> str:
     if dt.tzinfo is None:
@@ -31,6 +33,7 @@ def get_current_time(
     except Exception:
         raise ValueError(f"Unknown timezone: {timezone_name}")
     now = datetime.now(tz)
+    logger.info("Current time: %s", now.isoformat())
     return _to_iso(now)
 
 
@@ -57,4 +60,5 @@ def convert_time(
         dt = dt.astimezone(src)
 
     converted = dt.astimezone(dst)
+    logger.info("Converted time: %s", converted.isoformat())
     return _to_iso(converted)
