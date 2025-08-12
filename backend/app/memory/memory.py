@@ -4,6 +4,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import List
 
+from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockGenerator
+
 from memory.conversation_store import ConversationStore
 from llm_provider import ChatProvider
 
@@ -28,7 +30,6 @@ class ChatMessage:
 class MemoryManager:
     """Window+running summary memory for a chat session."""
     session_id: str
-    llm: ChatProvider
     store: ConversationStore = field(init=False)
     summary: str = field(default="")
     window: List[ChatMessage] = field(default_factory=list)
@@ -95,12 +96,12 @@ class MemoryManager:
                 "preserving key facts and decisions:\n\n" + text_block
         )
         try:
-            new_summary = self.llm.invoke(
-                [{"role": "user", "content": summary_instruction}],
-                max_tokens=128,
+            new_summary = AmazonBedrockGenerator(
+                model="eu.amazon.nova-micro-v1:0",
                 temperature=0.3,
-                top_p=0.9,
-            )
+                top_p=0.9
+            ).run(summary_instruction)["replies"][-1]
+
             if self.summary:
                 self.summary = f"{self.summary}\n{new_summary}"
             else:

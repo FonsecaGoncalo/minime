@@ -7,10 +7,9 @@ from haystack.components.agents import Agent
 from haystack.dataclasses import ChatMessage
 from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 
-import llm_provider
+import agents.prompts as prompts
 from llm_provider import Model
 from memory.memory import MemoryManager
-import agents.prompts as prompts
 from tools import time
 from tools.scheduler import schedule_meeting
 from tools.search_docs import make_search_docs
@@ -27,18 +26,13 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
     logger.info("inside chat: %s", message)
     mem = MemoryManager(
         session_id=session_id,
-        llm=llm_provider.llm(
-            SUMMARIZATION_MODEL,
-            max_tokens=128,
-            temperature=0.3,
-            top_p=0.9,
-        ),
     )
+
     memory_snapshot = mem.get_memory()
     logger.info(f"memory snapshot {memory_snapshot}")
 
     messages = _map_messages(memory_snapshot["conversation"])
-    messages.append((ChatMessage.from_user(prompts.llm_prompt(message))))
+    messages.append(ChatMessage.from_user(prompts.llm_prompt(message)))
 
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
