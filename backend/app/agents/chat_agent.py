@@ -9,7 +9,7 @@ from haystack.dataclasses import ChatMessage
 
 import llm_provider
 from llm_provider import Model
-from memory import MemoryManager
+from memory.memory import MemoryManager
 from prompts import build_messages
 from tools import time
 from tools.scheduler import schedule_meeting
