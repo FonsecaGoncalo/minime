@@ -1,8 +1,8 @@
 import logging
 
-from haystack import component, Document
+from haystack import component
 
-import rag
+from knowledge import rag
 from tracing_utils import log_ctx
 
 logger = logging.getLogger(__name__)

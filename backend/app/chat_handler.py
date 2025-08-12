@@ -10,7 +10,7 @@ from token_bucket import TokenBucket, TokenBucketConfig
 
 import boto3
 
-from chat_orchestrator import chat
+from agents.chat_agent import chat
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

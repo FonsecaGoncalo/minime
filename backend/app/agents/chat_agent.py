@@ -11,6 +11,7 @@ import llm_provider
 from llm_provider import Model
 from memory import MemoryManager
 from prompts import build_messages
+from tools import time
 from tools.scheduler import schedule_meeting
 from tools.search_docs import make_search_docs
 from tools.user_info import make_update_user_info_tool
@@ -50,12 +51,15 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
         # generation_kwargs={"temperature": 0.7, "top_p": 0.9},
     )
 
+    time_tools = time.TimeTools()
     result = Agent(
         chat_generator=llm,
         tools=[
             make_update_user_info_tool(mem),
             schedule_meeting,
-            make_search_docs(session_id, memory_snapshot)
+            make_search_docs(session_id, memory_snapshot),
+            time_tools.convert_time,
+            time_tools.get_current_time
         ]).run(messages=messages)
 
     assistant_response = result["messages"][-1].text

@@ -2,7 +2,7 @@ import json
 import logging
 import os
 
-from conversation_store import ConversationStore
+from memory.conversation_store import ConversationStore
 import llm_provider
 from llm_provider import Model
 from utils import email

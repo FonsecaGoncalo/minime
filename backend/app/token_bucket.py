@@ -13,7 +13,7 @@ class TokenBucketConfig:
 
 
 class TokenBucket:
-    """Simple DynamoDB-backed token bucket."""
+    """Simple DynamoDB token bucket."""
 
     def __init__(self, config: TokenBucketConfig) -> None:
         self.rate = config.rate_per_minute

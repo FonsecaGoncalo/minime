@@ -2,7 +2,7 @@ import json
 import logging
 import urllib.request
 
-from conversation_store import UserInfo
+from memory.conversation_store import UserInfo
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

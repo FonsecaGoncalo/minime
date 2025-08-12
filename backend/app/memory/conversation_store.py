@@ -8,23 +8,14 @@ import boto3
 from boto3.dynamodb.conditions import Key
 import ulid
 
-# ───────────────────────────────────────────────────────────────────────────────
-# AWS / DynamoDB setup
-# ───────────────────────────────────────────────────────────────────────────────
 DYNAMODB_TABLE = os.environ.get("DYNAMODB_TABLE", "Conversations")
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(DYNAMODB_TABLE)
 
-# ───────────────────────────────────────────────────────────────────────────────
-# Constants
-# ───────────────────────────────────────────────────────────────────────────────
 SUMMARY_ID = "SUMMARY"
 META_ID = "META"
 
 
-# ───────────────────────────────────────────────────────────────────────────────
-# Data models
-# ───────────────────────────────────────────────────────────────────────────────
 @dataclass
 class Message:
     session_id: str
@@ -46,9 +37,6 @@ class UserInfo:
     role: str | None = None
 
 
-# ───────────────────────────────────────────────────────────────────────────────
-# ConversationStore
-# ───────────────────────────────────────────────────────────────────────────────
 class ConversationStore:
     """
     Wrapper over a DynamoDB table with generic ``PK``/``SK`` keys.
@@ -81,7 +69,7 @@ class ConversationStore:
         )
 
     def get_conversation(self) -> List[Message]:
-        """Return chat messages (ascending by time, *excluding* SUMMARY record)."""
+        """Return chat messages"""
         resp = table.query(
             KeyConditionExpression=Key("PK").eq(self.session_id),
             ScanIndexForward=True,  # old‑>new
@@ -113,16 +101,13 @@ class ConversationStore:
                     Key={"PK": itm["PK"], "SK": itm["SK"]}
                 )
 
-    # ---------------------------------------------------------------------
-    # Summary‑level operations
-    # ---------------------------------------------------------------------
     def get_summary(self) -> Optional[str]:
-        """Fetch the running summary (or None if not present)."""
+        """Fetch the running summary"""
         resp = table.get_item(Key={"PK": self.session_id, "SK": SUMMARY_ID})
         return resp.get("Item", {}).get("content")
 
     def save_summary(self, text: str) -> None:
-        """Create or overwrite the session’s running summary."""
+        """Create or overwrite the session's running summary"""
         timestamp = datetime.utcnow().isoformat()
         self.logger.debug("save_summary session=%s len=%d", self.session_id, len(text))
 

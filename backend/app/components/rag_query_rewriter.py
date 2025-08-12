@@ -2,7 +2,7 @@ import logging
 
 from haystack import component
 
-from rag import rewrite_with_history
+from knowledge.rag import rewrite_with_history
 from tracing_utils import log_ctx
 
 logger = logging.getLogger(__name__)

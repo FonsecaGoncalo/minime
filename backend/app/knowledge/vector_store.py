@@ -2,8 +2,6 @@ import logging
 import os
 from typing import TypedDict, List
 
-from haystack_integrations.components.retrievers.pinecone import PineconeEmbeddingRetriever
-from haystack_integrations.document_stores.pinecone import PineconeDocumentStore
 from pinecone import Pinecone
 from pinecone.db_data import _Index as Index
 

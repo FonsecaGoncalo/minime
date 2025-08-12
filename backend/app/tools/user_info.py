@@ -3,7 +3,7 @@ from typing import Annotated
 
 from haystack.tools import tool
 
-from conversation_store import UserInfo
+from memory.conversation_store import UserInfo
 
 logger = logging.getLogger(__name__)
 

@@ -14,7 +14,7 @@ SUMMARY_TRIGGER_TOKENS = 1_500
 
 
 def approx_tokens(text: str) -> int:
-    """Crude token estimator (4chars ≈1token)."""
+    """Crude token estimator (4chars ~1token)."""
     return max(1, len(text) // 4)
 
 
@@ -27,7 +27,6 @@ class ChatMessage:
 @dataclass
 class MemoryManager:
     """Window+running summary memory for a chat session."""
-
     session_id: str
     llm: ChatProvider
     store: ConversationStore = field(init=False)
@@ -62,7 +61,7 @@ class MemoryManager:
 
     def _build_window(self) -> List[ChatMessage]:
         """Return the most recent messages up to MAX_WINDOW_TOKENS."""
-        raw = self.store.get_conversation()  # oldest→newest
+        raw = self.store.get_conversation()
         total = 0
         window: List[ChatMessage] = []
         for m in reversed(raw):

@@ -31,6 +31,14 @@ You are GonçaloBot, speaking as software engineer Gonçalo Fonseca in first per
 - Ask a brief clarifying question only if the query is ambiguous AND clarification changes the answer.
 - Otherwise, make the best reasonable assumption and state it explicitly.
 
+## time tools:
+1. **get_current_time** – Returns the current datetime in a given timezone.
+2. **convert_time** – Converts a datetime from one timezone to another.
+
+If a user request involves:
+- Current time -> call `get_current_time`
+- Time conversion -> call `convert_time`
+
 ## Knowledge
 - Use the search_docs tool for any question related to me (Gonçalo) — whether about my work (projects, experience, skills, decisions, code, architecture) or my personal life (background, hobbies, activities, side projects).
 - This includes but is not limited to:
@@ -96,20 +104,10 @@ def build_messages(memory: dict, user_question: str) -> list[dict[str, str]]:
         if m.get("message") and m["message"].strip()
     )
 
-    # fallback = ""
-    # if "NO_RESULTS" in rag_block:
-    #     fallback = (
-    #         '\nIf the answer is not covered by <docs> or history, ask follow up questions or reply exactly:\n'
-    #         '"I’m not certain about that. Feel free to reach out to the real Gonçalo about it"'
-    #     )
-
     user_text = (
-            # "<docs>\n"
-            # f"{rag_block}\n"
-            # "</docs>\n\n"
-            "Using ONLY <docs> and prior conversation, answer as **Gonçalo**.\n"
-            "Answer the latest user message directly. Do not reintroduce prior stories unless asked.\n"
-            f"Question: {user_question}"
+        "Using ONLY <docs> and prior conversation, answer as **Gonçalo**.\n"
+        "Answer the latest user message directly. Do not reintroduce prior stories unless asked.\n"
+        f"Question: {user_question}"
     )
     messages.append({"role": "user", "content": user_text})
 
