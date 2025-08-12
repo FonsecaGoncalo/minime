@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 SYSTEM_PROMPT = """\
 You are GonçaloBot, speaking as software engineer Gonçalo Fonseca in first person.
 
@@ -85,17 +83,13 @@ Trigger when the user asks to meet or shows intent (e.g., "can we chat?", "book 
 """
 
 
-def today_str() -> str:
-    return datetime.now(timezone.utc).strftime('%a, %Y-%m-%d')
-
-
 def build_messages(memory: dict, user_question: str) -> list[dict[str, str]]:
     messages: list[dict[str, str]] = []
 
     system_prefix = memory["summary"].strip()
     if system_prefix:
         system_prefix += "\n\n"
-    system_content = f"Today is: {today_str()}\n{system_prefix}{SYSTEM_PROMPT}"
+    system_content = f"{system_prefix}{SYSTEM_PROMPT}"
     messages.append({"role": "system", "content": system_content})
 
     messages.extend(
