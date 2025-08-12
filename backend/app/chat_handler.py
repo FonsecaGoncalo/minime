@@ -6,7 +6,7 @@ from typing import TypedDict
 
 from utils import notifications, error_messages
 from tracing import init_tracing, tracer
-from token_bucket import TokenBucket, TokenBucketConfig
+from rate_limiter.token_bucket import TokenBucket, TokenBucketConfig
 
 import boto3
 
