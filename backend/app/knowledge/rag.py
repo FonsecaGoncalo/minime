@@ -1,9 +1,9 @@
 import logging
 
 import llm_provider
-import vector_store
+import knowledge.vector_store as vector_store
 from llm_provider import Model
-from vector_store import SearchResult
+from knowledge.vector_store import SearchResult
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ def build_rewrite_messages(memory: dict, user_msg: str) -> list[dict[str, str]]:
         {"role": "system", "content": REWRITE_SYS},
         {"role": "user", "content": user_block},
     ]
+
 
 def rewrite_with_history(memory: dict, user_msg: str) -> str:
     logger.info("Rewriting conversation history")
