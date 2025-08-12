@@ -47,7 +47,7 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
         model="gpt-5",
         streaming_callback=lambda chunk: on_stream(chunk.content) if chunk.content else None,
         generation_kwargs={"reasoning_effort": "minimal"},
-        tools=[make_update_user_info_tool(mem), schedule_meeting]
+        # tools=[make_update_user_info_tool(mem), schedule_meeting]
         # generation_kwargs={"temperature": 0.7, "top_p": 0.9},
     )
 
