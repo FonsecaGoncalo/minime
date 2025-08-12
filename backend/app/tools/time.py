@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing_extensions import Annotated
-from pydantic import BaseModel
-from haystack.tools import tool
 from zoneinfo import ZoneInfo
 
-
-class TimeResult(BaseModel):
-    value: str
+from haystack.tools import tool
+from typing import Annotated
 
 
 def _to_iso(dt: datetime) -> str:
@@ -31,13 +27,13 @@ def _parse_iso(s: str) -> datetime:
 )
 def get_current_time(
         timezone_name: Annotated[str, "IANA timezone like 'Europe/Lisbon'"] = "UTC",
-) -> TimeResult:
+) -> str:
     try:
         tz = ZoneInfo(timezone_name)
     except Exception:
         raise ValueError(f"Unknown timezone: {timezone_name}")
     now = datetime.now(tz)
-    return TimeResult(value=_to_iso(now))
+    return _to_iso(now)
 
 
 @tool(
@@ -46,11 +42,10 @@ def get_current_time(
                 "Args: datetime_iso, from_tz, to_tz. Returns ISO-8601."
 )
 def convert_time(
-        self,
         datetime_iso: Annotated[str, "ISO-8601 input, e.g., 2025-08-11T14:00:00Z"],
         from_tz: Annotated[str, "Source IANA timezone"],
         to_tz: Annotated[str, "Target IANA timezone"],
-) -> TimeResult:
+) -> str:
     try:
         src = ZoneInfo(from_tz)
         dst = ZoneInfo(to_tz)
@@ -64,4 +59,4 @@ def convert_time(
         dt = dt.astimezone(src)
 
     converted = dt.astimezone(dst)
-    return TimeResult(value=_to_iso(converted))
+    return _to_iso(converted)
