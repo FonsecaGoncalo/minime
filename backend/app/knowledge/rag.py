@@ -2,11 +2,8 @@ import logging
 
 import knowledge.vector_store as vector_store
 from knowledge.vector_store import SearchResult
-from llm_provider import Model
 
 logger = logging.getLogger(__name__)
-
-REWRITE_MODEL = Model.NOVA_MICRO
 
 REWRITE_SYS = """You are a search-query generator for a RAG system.
 Rewrite the last user message into a concise search query for retrieving the most relevant docs.

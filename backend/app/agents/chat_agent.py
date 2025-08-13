@@ -8,7 +8,6 @@ from haystack.dataclasses import ChatMessage
 from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 
 import agents.prompts as prompts
-from llm_provider import Model
 from memory.memory import MemoryManager
 from tools import time
 from tools.scheduler import schedule_meeting
@@ -18,7 +17,6 @@ from tracing_utils import log_ctx
 
 logger = logging.getLogger(__name__)
 
-SUMMARIZATION_MODEL = Model.NOVA_MICRO
 MAX_TOKENS_RESPONSE = 512
 
 

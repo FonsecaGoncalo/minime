@@ -7,7 +7,6 @@ from typing import List
 from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockGenerator
 
 from memory.conversation_store import ConversationStore
-from llm_provider import ChatProvider
 
 logger = logging.getLogger(__name__)
 
