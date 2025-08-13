@@ -2,9 +2,9 @@ import json
 import logging
 import os
 
+from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockGenerator
+
 from memory.conversation_store import ConversationStore
-import llm_provider
-from llm_provider import Model
 from services import email
 from tracing import init_tracing, tracer
 
@@ -52,16 +52,12 @@ def handler(event, context):
                 "preserving key facts and decisions:\n\n" + text_block
         )
 
-        llm = llm_provider.llm(
-            Model.NOVA_MICRO, max_tokens=128, temperature=0.3, top_p=0.9
-        )
         try:
-            summary = llm.invoke(
-                [{"role": "user", "content": prompt}],
-                max_tokens=128,
+            summary = AmazonBedrockGenerator(
+                model="eu.amazon.nova-micro-v1:0",
                 temperature=0.3,
-                top_p=0.9,
-            )
+                top_p=0.9
+            ).run(prompt=prompt)["replies"][-1]
         except Exception as exc:
             logger.warning("Failed to generate summary: %s", exc)
             return {"statusCode": 500}
