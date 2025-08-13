@@ -4,7 +4,7 @@ from typing import Annotated
 
 from haystack.tools import tool
 
-import google_calendar
+from services import google_calendar
 
 logger = logging.getLogger(__name__)
 
