@@ -71,17 +71,14 @@ def _build_prompt(text_block: str) -> str:
 
 
 def _run_bedrock(prompt: str) -> str:
-    """Call Bedrock via Haystack and return reply text."""
     generator = AmazonBedrockChatGenerator(
         model=MODEL_ID,
-        temperature=TEMPERATURE,
-        top_p=TOP_P,
     )
     result = generator.run(messages=[ChatMessage.from_user(prompt)])
     replies: List[ChatMessage] = result.get("replies", [])
     if not replies:
         raise RuntimeError("No replies returned by the model")
-    return getattr(replies[-1], "content", str(replies[-1]))
+    return getattr(replies[-1], "content", replies[-1].text)
 
 
 def _format_meta(session_id: str, messages: List[ChatMessage], user_info: Any) -> str:

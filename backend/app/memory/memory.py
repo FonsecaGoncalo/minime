@@ -4,7 +4,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import List
 
-from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockGenerator
+import haystack
+from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockChatGenerator
 
 from memory.conversation_store import ConversationStore
 
@@ -95,11 +96,9 @@ class MemoryManager:
                 "preserving key facts and decisions:\n\n" + text_block
         )
         try:
-            new_summary = AmazonBedrockGenerator(
+            new_summary = AmazonBedrockChatGenerator(
                 model="eu.amazon.nova-micro-v1:0",
-                temperature=0.3,
-                top_p=0.9
-            ).run(summary_instruction)["replies"][-1]
+            ).run([haystack.dataclasses.ChatMessage.fromUser(summary_instruction)])["replies"][-1].text
 
             if self.summary:
                 self.summary = f"{self.summary}\n{new_summary}"
