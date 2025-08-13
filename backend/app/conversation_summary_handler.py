@@ -2,7 +2,8 @@ import json
 import logging
 import os
 
-from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockGenerator
+from haystack.dataclasses import ChatMessage
+from haystack_integrations.components.generators.amazon_bedrock import AmazonBedrockChatGenerator
 
 from memory.conversation_store import ConversationStore
 from services import email
@@ -53,11 +54,11 @@ def handler(event, context):
         )
 
         try:
-            summary = AmazonBedrockGenerator(
+            summary = AmazonBedrockChatGenerator(
                 model="eu.amazon.nova-micro-v1:0",
                 temperature=0.3,
                 top_p=0.9
-            ).run(prompt=prompt)["replies"][-1]
+            ).run(messages=[ChatMessage.from_user(prompt)])["replies"][-1]
         except Exception as exc:
             logger.warning("Failed to generate summary: %s", exc)
             return {"statusCode": 500}
