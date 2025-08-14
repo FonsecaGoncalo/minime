@@ -12,6 +12,9 @@ import {
 
 const rand = (min, max) => min + Math.random() * (max - min);
 
+/* Smooth deceleration/acceleration at the ends (no snap on reverse) */
+const easeInOutSine = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+
 export default function FlyingLogos({className = ''}) {
     const getBaseIconSize = () =>
         typeof window !== 'undefined' && window.innerWidth < 640 ? 10 : 26;
@@ -84,19 +87,24 @@ export default function FlyingLogos({className = ''}) {
                         scale: [1, 1 + (0.02 + cfg.depth * 0.03), 1],
                     }}
                     transition={{
+                        /* Smooth out the reversals: use sine easing per segment */
                         x: {
                             duration: cfg.durationX,
-                            ease: 'linear',
+                            ease: [easeInOutSine, easeInOutSine],
+                            times: [0, 0.5, 1],
                             repeat: Infinity,
                             repeatType: 'mirror',
-                            delay: cfg.delay
+                            delay: cfg.delay,
+                            type: 'tween'
                         },
                         y: {
                             duration: cfg.durationY,
-                            ease: 'linear',
+                            ease: [easeInOutSine, easeInOutSine],
+                            times: [0, 0.5, 1],
                             repeat: Infinity,
                             repeatType: 'mirror',
-                            delay: cfg.delay * 0.7
+                            delay: cfg.delay * 0.7,
+                            type: 'tween'
                         },
                         rotate: {
                             duration: cfg.durationX * 0.9,
