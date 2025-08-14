@@ -63,7 +63,7 @@ export default function FlyingLogos({className = ''}) {
     );
 
     return (
-        <div className={`fixed inset-0 pointer-events-none overflow-hidden ${className}`}>
+        <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
             {logoConfigs.map((cfg, i) => (
                 <motion.div
                     key={i}
