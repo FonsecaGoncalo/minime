@@ -57,7 +57,7 @@ export default function FlyingLogos({className = ''}) {
                     wobble: rand(2, 6)
                 };
             }),
-        [logos, baseSize]
+        [logos, baseSize, palette]
     );
 
     return (
