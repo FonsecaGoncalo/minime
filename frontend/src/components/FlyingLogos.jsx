@@ -35,11 +35,10 @@ export default function FlyingLogos({className = ''}) {
         []
     );
 
-    const palette = ['#f87160', '#f5a45b', '#5cbbb3', '#f7988c']; // coral/orange/teal/pink
-
     const logoConfigs = useMemo(
         () =>
             logos.map((Icon) => {
+                const palette = ['#f87160', '#f5a45b', '#5cbbb3', '#f7988c']; // coral/orange/teal/pink
                 const depth = Math.random();
                 return {
                     Icon,
@@ -57,7 +56,7 @@ export default function FlyingLogos({className = ''}) {
                     wobble: rand(2, 6)
                 };
             }),
-        [logos, baseSize, palette]
+        [logos, baseSize]
     );
 
     return (
