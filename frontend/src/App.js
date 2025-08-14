@@ -30,13 +30,13 @@ const ALL_PROMPTS = [
 ];
 
 export default function App() {
-    const [messages, setMessages] = useState([]);          // {role:'user'|'assistant', content:'', finished?:bool}
+    const [messages, setMessages] = useState([]);
     const [draft, setDraft] = useState('');
     const [waiting, setWaiting] = useState(false);
     const [error, setError] = useState(null);
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
-    const bottomRef = useRef(null);                        // auto‑scroll anchor
+    const bottomRef = useRef(null);
     const examplePrompts = useMemo(() => {
         const arr = [...ALL_PROMPTS];
         for (let i = arr.length - 1; i > 0; i--) {
@@ -46,11 +46,8 @@ export default function App() {
         return arr.slice(0, 3);
     }, []);
 
-    // ---------- WebSocket lifecycle ----------
     useEffect(() => {
-        const socket = new WebSocket(
-            'wss://api.gfonseca.io'
-        );
+        const socket = new WebSocket('wss://api.gfonseca.io');
         socketRef.current = socket;
 
         socket.onopen = () => console.log('✅ WebSocket open');
@@ -59,7 +56,7 @@ export default function App() {
             const data = JSON.parse(event.data);
 
             if (data.op === 'error') {
-                setMessages(prev => prev.slice(0, -1))
+                setMessages(prev => prev.slice(0, -1));
                 setError(data.message || 'Error');
                 setWaiting(false);
                 return;
@@ -69,12 +66,10 @@ export default function App() {
                 setMessages((prev) => {
                     const last = prev[prev.length - 1];
                     if (last?.role === 'assistant' && !last.finished) {
-                        // extend existing streamed message
                         last.content += data.content;
                         last.loading = false;
                         return [...prev];
                     }
-                    // first chunk ➜ push new assistant message
                     return [...prev, {role: 'assistant', content: data.content, finished: false, loading: false}];
                 });
             }
@@ -83,10 +78,7 @@ export default function App() {
                 setMessages((prev) => {
                     const last = prev[prev.length - 1];
                     if (last?.role === 'assistant') {
-                        return [
-                            ...prev.slice(0, -1),
-                            {...last, finished: true, loading: false},
-                        ];
+                        return [...prev.slice(0, -1), {...last, finished: true, loading: false}];
                     }
                     return prev;
                 });
@@ -102,7 +94,6 @@ export default function App() {
         return () => socket.close();
     }, [connectionVersion]);
 
-    // ---------- send user message ----------
     const send = (textOverride) => {
         const text = (textOverride ?? draft).trim();
         if (!text || waiting) return;
@@ -126,7 +117,6 @@ export default function App() {
         setWaiting(true);
     };
 
-    // auto‑scroll every time messages change
     useEffect(() => {
         bottomRef.current?.scrollIntoView({behavior: 'smooth'});
     }, [messages]);
@@ -137,34 +127,32 @@ export default function App() {
         <>
             <main
                 className={`
-            min-h-dvh w-full app-bg flex flex-col
-            transition-all duration-500
-            ${landing ? 'items-center justify-center' : ''}
-          `}
+          min-h-dvh w-full app-bg flex flex-col
+          transition-all duration-500
+          ${landing ? 'items-center justify-center' : ''}
+        `}
                 style={{
                     paddingTop: 'env(safe-area-inset-top)',
                     paddingLeft: 'env(safe-area-inset-left)',
                     paddingRight: 'env(safe-area-inset-right)'
                 }}
             >
-                {/* ---------- Top header when chat active ---------- */}
+                {/* Header (light) */}
                 {!landing && (
-                    <header
-                        className="sticky top-0 w-full bg-neutral-900/30 backdrop-blur border-b border-neutral-800 z-10"
-                    >
+                    <header className="sticky top-0 w-full bg-white/70 backdrop-blur border-b border-gray-200 z-10">
                         <div className="max-w-screen-md w-full mx-auto flex items-center gap-4 px-4 py-3">
-                            <h1 className="text-white font-medium flex-1">Gonçalo Fonseca</h1>
+                            <h1 className="text-gray-800 font-medium flex-1">Gonçalo Fonseca</h1>
                             <SocialNetworkBadge
                                 url="https://github.com/FonsecaGoncalo"
                                 icon="github"
                                 size={20}
-                                className="text-gray-300 hover:text-white"
+                                className="text-gray-500 hover:text-gray-800"
                             />
                             <SocialNetworkBadge
                                 url="https://www.linkedin.com/in/goncalo-fonseca"
                                 icon="linkedin"
                                 size={20}
-                                className="text-gray-300 hover:text-white"
+                                className="text-gray-500 hover:text-gray-800"
                             />
                             <button
                                 aria-label="Close chat"
@@ -174,7 +162,7 @@ export default function App() {
                                     setWaiting(false);
                                     setConnectionVersion(v => v + 1);
                                 }}
-                                className="text-gray-300 hover:text-white active:scale-95 transition-transform"
+                                className="text-gray-500 hover:text-gray-800 active:scale-95 transition-transform"
                             >
                                 <XMarkIcon className="w-5 h-5"/>
                             </button>
@@ -182,10 +170,10 @@ export default function App() {
                     </header>
                 )}
 
-                {/* ---------- Landing greeting ---------- */}
+                {/* Landing greeting */}
                 {landing && (
                     <div className="flex flex-col items-center gap-4 mb-10 w-80 sm:w-96 md:w-[520px]">
-                        <div className="text-2xl md:text-3xl font-medium text-white text-left leading-tight">
+                        <div className="text-2xl md:text-3xl font-medium text-gray-900 text-left leading-tight">
                             <SplitText text="Hi!👋" as="h1"/>
                             <SplitText text="I'm Gonçalo, a Software Engineer" as="h1" delay={0.2}/>
                         </div>
@@ -200,34 +188,21 @@ export default function App() {
                                 <button
                                     key={text}
                                     onClick={() => send(text)}
-                                    className="flex-shrink-0 snap-start bg-neutral-900/30 backdrop-blur text-gray-200 border border-neutral-800 rounded-xl p-4 w-3/5 sm:w-48 h-32 flex flex-col justify-between hover:bg-neutral-900/50 transition"
+                                    className="flex-shrink-0 snap-start bg-white/90 backdrop-blur text-gray-800 border border-gray-200 rounded-xl p-4 w-3/5 sm:w-48 h-32 flex flex-col justify-between hover:shadow-md transition"
                                 >
                                     <span className="text-sm">{text}</span>
-                                    <Icon className="w-5 h-5 text-gray-400 self-end"/>
+                                    <Icon className="w-5 h-5 text-[#f87160] self-end"/>
                                 </button>
                             ))}
                         </div>
                     </div>
                 )}
 
-
-                {/* ---------- Chat history ---------- */}
+                {/* Chat history */}
                 {messages.length > 0 && (
-                    /* Chat scroll container */
-                    <section
-                        className="
-                flex-1 overflow-y-auto overscroll-contain
-                  scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800
-                px-4
-              "
-                    >
+                    <section className="flex-1 overflow-y-auto overscroll-contain px-4">
                         <div
-                            className="
-                          flex flex-col gap-4 pt-10
-                          max-w-screen-md w-full mx-auto
-                          pb-[calc(5.5rem+env(safe-area-inset-bottom))]
-                        "
-                        >
+                            className="flex flex-col gap-4 pt-10 max-w-screen-md w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
                             {messages.map((m, i) => (
                                 <motion.div
                                     key={i}
@@ -248,8 +223,9 @@ export default function App() {
                     </section>
                 )}
 
-                {/* ---------- Input (sticky at bottom, still part of normal flow) ---------- */}
+                {/* Input + footer */}
                 {error && <ErrorBanner message={error} onClose={() => setError(null)}/>}
+
                 <ChatInput
                     landing={landing}
                     value={draft}
@@ -264,13 +240,13 @@ export default function App() {
                             url="https://github.com/FonsecaGoncalo"
                             icon="github"
                             size={32}
-                            className="text-gray-300 hover:text-white"
+                            className="text-gray-500 hover:text-gray-800"
                         />
                         <SocialNetworkBadge
                             url="https://www.linkedin.com/in/goncalo-fonseca"
                             icon="linkedin"
                             size={32}
-                            className="text-gray-300 hover:text-white"
+                            className="text-gray-500 hover:text-gray-800"
                         />
                     </div>
                 )}

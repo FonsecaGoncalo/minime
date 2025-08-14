@@ -14,13 +14,10 @@ const ErrorBanner = ({message, onClose}) => (
             >
                 <div className="max-w-screen-md w-full mx-4 pointer-events-auto">
                     <div
-                        className="bg-neutral-900/60 backdrop-blur-md border border-red-600 text-red-200 px-4 py-3 rounded-xl flex items-center shadow-lg">
+                        className="bg-white/90 backdrop-blur border border-red-300 text-red-700 px-4 py-3 rounded-xl flex items-center shadow-sm">
                         <ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-500 mr-2"/>
-                        <div className="flex-1 text-sm font-medium">
-                            {message}
-                        </div>
-                        <button onClick={onClose} aria-label="Dismiss"
-                                className="ml-2 hover:bg-neutral-800/70 p-1 rounded">
+                        <div className="flex-1 text-sm font-medium">{message}</div>
+                        <button onClick={onClose} aria-label="Dismiss" className="ml-2 hover:bg-red-50 p-1 rounded">
                             <XMarkIcon className="h-5 w-5 text-red-500"/>
                         </button>
                     </div>
