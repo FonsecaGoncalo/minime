@@ -81,7 +81,7 @@ export default function SplitText({
     return () => {
       if (controls && typeof controls.stop === 'function') controls.stop();
     };
-  }, [delay, onComplete]);
+  }, [delay, onComplete, highlightClass, highlightWords]);
 
   return (
     <Component ref={ref} className={className}>
