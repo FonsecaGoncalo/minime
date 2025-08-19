@@ -167,7 +167,7 @@ export default function App() {
 
                             <div className="w-full mb-6">
                                 <div className="overflow-x-auto no-scrollbar -mx-4 overscroll-contain">
-                                    <div className="flex gap-3 snap-x snap-mandatory sm:justify-center">
+                                    <div className="flex gap-3 snap-x snap-mandatory sm:justify-center px-3 sm:px-0">
                                         {examplePrompts.map(({text, Icon}) => (
                                             <button
                                                 key={text}
