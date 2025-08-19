@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useMemo} from 'react';
+import {useState, useRef, useEffect, useMemo, useCallback} from 'react';
 import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
@@ -38,6 +38,8 @@ export default function App() {
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
+    const [titleReady, setTitleReady] = useState(false);
+    const onTitleDone = useCallback(() => setTitleReady(true), []);
 
     const examplePrompts = useMemo(() => {
         const arr = [...ALL_PROMPTS];
@@ -147,8 +149,19 @@ export default function App() {
                             <div className="w-[88vw] max-w-[520px] mb-6 self-center">
                                 <div
                                     className="text-[28px] leading-8 md:text-3xl md:leading-tight font-medium text-gray-900 text-left">
-                                    <SplitText text="Hi!👋" as="h1"/>
-                                    <SplitText text="I'm Gonçalo, a Software Engineer" as="h1" delay={0.2}/>
+                                    <h1>
+                                        <SplitText text="Hi!" as="span" />
+                                        <span className={`inline-block align-baseline leading-none ml-2 relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}>👋</span>
+                                    </h1>
+                                    <h1>
+                                        <SplitText
+                                            text={"I'm Gonçalo, a Software Engineer"}
+                                            as="span"
+                                            delay={0.12}
+                                            highlightWords={["Gonçalo"]}
+                                            onComplete={onTitleDone}
+                                        />
+                                    </h1>
                                 </div>
                             </div>
 

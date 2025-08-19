@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global text on light background */
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
@@ -50,7 +49,6 @@ code {
   background-repeat: no-repeat;
 }
 
-/* iOS/Small-screen fix: avoid 'background-attachment: fixed' jank */
 @media (max-width: 640px) {
   .app-bg {
     background-attachment: scroll;
@@ -78,7 +76,6 @@ code {
   }
 }
 
-/* Optional soft center mask (use by adding 'logos-mask' class to FlyingLogos) */
 .logos-mask {
   -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 38%,
     transparent 45%, rgba(255,255,255,0.6) 70%, #fff 100%);
@@ -88,6 +85,34 @@ code {
 
 @media (prefers-reduced-motion: reduce) {
   .logos-mask, .logos-mask * {
+    animation: none !important;
+  }
+}
+
+.highlight-underline {
+  background-image: linear-gradient(transparent 62%, rgba(248, 113, 96, 0.22) 62%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+}
+
+@keyframes waveOnce {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-8deg); }
+  60% { transform: rotate(6deg); }
+  80% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.wave-once {
+  transform-origin: 70% 70%;
+  animation: waveOnce 0.8s ease-out 0s 1;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-once {
     animation: none !important;
   }
 }
