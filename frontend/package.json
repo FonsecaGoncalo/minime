@@ -10,7 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.9.0",
     "framer-motion": "^12.16.0",
-    "mermaid": "^11.9.0",
+    "mermaid": "^11.10.0",
     "motion-plus": "1.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
