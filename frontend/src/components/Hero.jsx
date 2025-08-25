@@ -71,23 +71,6 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
               />
             </div>
 
-            {/* Social icons under input */}
-            <div className="mt-2 sm:mt-3 mb-2 text-center">
-              <div className="flex items-center justify-center gap-5">
-                <SocialNetworkBadge
-                  url="https://github.com/FonsecaGoncalo"
-                  icon="github"
-                  size={22}
-                  className="text-muted hover:text-brand"
-                />
-                <SocialNetworkBadge
-                  url="https://www.linkedin.com/in/goncalo-fonseca"
-                  icon="linkedin"
-                  size={22}
-                  className="text-muted hover:text-brand"
-                />
-              </div>
-            </div>
           </div>
 
           {/* Rolling Prompts - full bleed at the bottom */}
@@ -109,6 +92,26 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
               onSelect={(p) => onSend(p)}
               className="w-full"
             />
+          </div>
+
+          {/* Social icons footer below prompts */}
+          <div className="w-full mb-6 sm:mb-8 md:mb-10 px-4">
+            <div className="max-w-6xl mx-auto text-center">
+              <div className="flex items-center justify-center gap-5">
+                <SocialNetworkBadge
+                  url="https://github.com/FonsecaGoncalo"
+                  icon="github"
+                  size={22}
+                  className="text-muted hover:text-brand"
+                />
+                <SocialNetworkBadge
+                  url="https://www.linkedin.com/in/goncalo-fonseca"
+                  icon="linkedin"
+                  size={22}
+                  className="text-muted hover:text-brand"
+                />
+              </div>
+            </div>
           </div>
         </div>
     );
