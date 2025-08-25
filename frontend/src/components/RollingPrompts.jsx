@@ -101,7 +101,7 @@ export default function RollingPrompts({
                   className="rp-chip group relative inline-flex items-center select-none rounded-md border border-borderCosmos bg-surface/80 backdrop-blur text-ink shadow-sm transition-colors hover:bg-surface/90 focus:outline-none focus:ring-2 focus:ring-brand/30 ring-offset-1 ring-offset-surface opacity-100 px-3.5 pr-7 sm:px-4 sm:pr-8 py-2 sm:py-2.5 h-14 text-xs sm:text-sm text-left whitespace-normal break-words min-w-[180px] sm:min-w-[200px] md:min-w-[220px] max-w-[300px] sm:max-w-[360px] md:max-w-[420px]"
                 >
                   <span className="rp-text leading-snug w-full">{p}</span>
-                  <ArrowUpRightIcon className="pointer-events-none absolute bottom-1.5 right-1.5 w-4 h-4 text-muted group-hover:text-ink transition-colors" aria-hidden="true" />
+                  <ArrowUpRightIcon className="pointer-events-none absolute bottom-1.5 right-1.5 w-4 h-4 text-muted group-hover:text-brand transition-colors" aria-hidden="true" />
                 </button>
               ))}
             </div>

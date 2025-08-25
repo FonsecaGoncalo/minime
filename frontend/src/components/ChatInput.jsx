@@ -4,7 +4,7 @@ export default function ChatInput({landing, value, setValue, onSend, disabled, r
     const shell = `
     ${landing ? 'h-16 rounded-2xl shadow-md' : 'h-14 rounded-xl shadow-sm'}
     bg-surface/90 backdrop-blur flex items-center
-    border border-borderWarm
+    border border-borderCosmos
     px-4 transition-all duration-500
     touch-manipulation
   `;
@@ -15,7 +15,7 @@ export default function ChatInput({landing, value, setValue, onSend, disabled, r
         return (
             <div className={`${shell} ${center}`}>
                 <input
-                    className={`flex-1 bg-transparent text-base text-ink caret-gray-700 placeholder:text-muted outline-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex-1 bg-transparent text-base text-ink caret-brand placeholder:text-muted outline-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     placeholder="Ask me anything"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
@@ -46,7 +46,7 @@ export default function ChatInput({landing, value, setValue, onSend, disabled, r
             <div className="max-w-screen-md mx-auto px-3 sm:px-0">
                 <div className={shell}>
                     <input
-                        className={`flex-1 bg-transparent text-base text-ink caret-gray-700 placeholder:text-muted outline-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex-1 bg-transparent text-base text-ink caret-brand placeholder:text-muted outline-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                         placeholder="Ask me anything"
                         value={value}
                         onChange={(e) => setValue(e.target.value)}

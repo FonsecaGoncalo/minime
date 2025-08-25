@@ -125,20 +125,20 @@ export default function App() {
                         /* ---------- CHAT LAYOUT ---------- */
                         <>
                             <header
-                                className="sticky top-0 w-full bg-white/70 backdrop-blur border-b border-gray-200 z-10">
+                                className="sticky top-0 w-full bg-surface/80 backdrop-blur border-b border-borderCosmos z-10">
                                 <div className="max-w-screen-md w-full mx-auto flex items-center gap-4 px-4 py-3">
-                                    <h1 className="text-gray-800 font-medium flex-1">Gonçalo Fonseca</h1>
+                                    <h1 className="text-ink font-medium flex-1">Gonçalo Fonseca</h1>
                                     <SocialNetworkBadge
                                         url="https://github.com/FonsecaGoncalo"
                                         icon="github"
                                         size={20}
-                                        className="text-gray-500 hover:text-gray-800"
+                                        className="text-muted hover:text-brand"
                                     />
                                     <SocialNetworkBadge
                                         url="https://www.linkedin.com/in/goncalo-fonseca"
                                         icon="linkedin"
                                         size={20}
-                                        className="text-gray-500 hover:text-gray-800"
+                                        className="text-muted hover:text-brand"
                                     />
                                     <button
                                         aria-label="Close chat"
@@ -148,7 +148,7 @@ export default function App() {
                                             setWaiting(false);
                                             setConnectionVersion(v => v + 1);
                                         }}
-                                        className="text-gray-500 hover:text-gray-800 active:scale-95 transition-transform"
+                                        className="text-muted hover:text-brand active:scale-95 transition-transform"
                                     >
                                         <XMarkIcon className="w-5 h-5"/>
                                     </button>

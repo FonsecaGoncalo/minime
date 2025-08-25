@@ -11,12 +11,12 @@ const AssistantBubbleBase = ({text, loading, finished}) => (
         className="self-start max-w-[75%] flex flex-col gap-1"
     >
         <div
-            className="bg-white/90 backdrop-blur border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-sm text-sm text-gray-800 shadow-sm">
+            className="bg-surface/90 backdrop-blur border border-borderCosmos px-4 py-3 rounded-2xl rounded-bl-sm text-sm text-ink shadow-sm">
             {loading && !text ? (
                 <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0s]"/>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"/>
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"/>
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:0s]"/>
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:0.2s]"/>
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce [animation-delay:0.4s]"/>
                 </div>
             ) : (
                 <MarkdownTypewriter text={text} finished={finished}/>
@@ -35,7 +35,7 @@ const UserBubbleBase = ({text}) => (
         transition={{duration: 0.2}}
         className="self-end max-w-[75%] flex flex-col gap-1"
     >
-        <div className="inline-block bg-brand text-white px-4 py-3 rounded-2xl rounded-br-sm text-sm shadow-sm">
+        <div className="inline-block bg-brand text-edge px-4 py-3 rounded-2xl rounded-br-sm text-sm shadow-sm">
             {text}
         </div>
     </motion.div>

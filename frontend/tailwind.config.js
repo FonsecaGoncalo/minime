@@ -7,16 +7,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // User-provided Space palette
-        brand: '#006A67',        // teal accent (primary)
-        brandAlt: '#FFF4B7',     // pale yellow accent (secondary)
-        deepBlue: '#000B58',     // deep space
-        midBlue: '#003161',      // mid space
-        edge: '#000B58',         // edge/fade background
-        surface: '#003161',      // card/input surface
-        ink: '#E5E7EB',          // light text on dark
-        muted: '#A1A8C3',        // secondary text
-        borderCosmos: '#0A2A62', // subtle borders on dark
+        // Deep Navy (Space) palette
+        brand: '#00E0FF',        // Accent 1 (cyan glow)
+        brandAlt: '#FF4C29',     // Accent 2 (warm CTA)
+        edge: '#0A0F29',         // Primary background
+        surface: '#0E1B47',      // Surface / cards / input
+        surfaceAlt: '#1A3A8C',   // Brighter surface for highlights
+        ink: '#E4E8F0',          // Neutral text
+        muted: '#A7B1C5',        // Secondary text
+        borderCosmos: '#142042', // Subtle borders
       },
     },
   },

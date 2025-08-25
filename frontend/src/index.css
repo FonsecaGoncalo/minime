@@ -9,8 +9,8 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #e5e7eb; /* ink on dark */
-  background: #000B58; /* fallback while app-bg paints (deep space) */
+  color: #E4E8F0; /* ink on dark */
+  background: #0A0F29; /* fallback while app-bg paints (deep navy) */
 }
 
 code {
@@ -31,18 +31,18 @@ code {
   isolation: isolate;
   z-index: 0;
 
-  /* Space palette (user-provided) */
-  --space0: #000B58; /* outer */
-  --space1: #003161; /* mid */
-  --space2: #001C5A; /* inner */
-  --glow-teal: rgba(0, 106, 103, 0.22);   /* #006A67 */
-  --glow-sun: rgba(255, 244, 183, 0.18);  /* #FFF4B7 */
-  --glow-magenta: rgba(100, 13, 95, 0.16);/* #640D5F */
+  /* Deep Navy palette */
+  --space0: #0A0F29; /* outer */
+  --space1: #0E1B47; /* inner 1 */
+  --space2: #0C183F; /* inner 2 */
+  --glow-cyan: rgba(0, 224, 255, 0.18);      /* #00E0FF */
+  --glow-warm: rgba(255, 76, 41, 0.14);      /* #FF4C29 */
+  --glow-indigo: rgba(26, 58, 140, 0.20);    /* #1A3A8C */
 
   background:
-    radial-gradient(110% 120% at 78% 20%, var(--glow-teal), transparent 55%),
-    radial-gradient(95% 70% at 18% 28%, var(--glow-magenta), transparent 60%),
-    radial-gradient(75% 85% at 72% 86%, var(--glow-sun), transparent 65%),
+    radial-gradient(110% 120% at 78% 20%, var(--glow-cyan), transparent 55%),
+    radial-gradient(95% 70% at 18% 28%, var(--glow-indigo), transparent 60%),
+    radial-gradient(75% 85% at 72% 86%, var(--glow-warm), transparent 65%),
     linear-gradient(180deg, var(--space0) 0%, var(--space2) 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -90,7 +90,7 @@ code {
 }
 
 .highlight-underline {
-  background-image: linear-gradient(transparent 62%, rgba(255, 244, 183, 0.32) 62%);
+  background-image: linear-gradient(transparent 62%, rgba(0, 224, 255, 0.28) 62%);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   border-radius: 2px;
@@ -119,7 +119,7 @@ code {
 
 /* Headline improvements */
 .heading-name {
-  background-image: linear-gradient(90deg, #006A67 0%, #FFF4B7 50%, #003161 100%);
+  background-image: linear-gradient(90deg, #00E0FF 0%, #1A3A8C 50%, #0E1B47 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -132,7 +132,11 @@ code {
 
 /* Emphasis for role keywords in headline */
 .highlight-role {
-  color: #FFF4B7;
+  color: #00E0FF;
+  font-weight: 600;
+}
+.highlight-name {
+  color: #FF4C29;
   font-weight: 600;
 }
 
