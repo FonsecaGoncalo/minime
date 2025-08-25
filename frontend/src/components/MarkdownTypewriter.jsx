@@ -49,13 +49,16 @@ function MarkdownTypewriter({text = '', speed = 10, finished = false}) {
                             return <Mermaid chart={String(children)}/>;
                         }
                         return inline ? (
-                            <code className="bg-rose-50 rounded px-1 py-0.5 text-rose-600" {...props}>
+                            <code
+                                className="bg-[rgba(124,77,255,0.12)] border border-[#262637] rounded px-1.5 py-[2px] text-ink"
+                                {...props}
+                            >
                                 {children}
                             </code>
                         ) : (
-                            <pre className="bg-gray-50 border border-gray-200 rounded p-3 overflow-x-auto">
-                <code className={className} {...props}>{children}</code>
-              </pre>
+                            <pre className="bg-[#111118] border border-[#262637] rounded-md p-3 overflow-x-auto text-[#E6EDF3] text-[13.5px] leading-relaxed">
+                                <code className={`${className || ''} font-mono`} {...props}>{children}</code>
+                            </pre>
                         );
                     },
                 }}

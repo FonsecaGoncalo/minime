@@ -41,7 +41,7 @@ export default function FlyingLogos({className = ''}) {
     const logoConfigs = useMemo(
         () =>
             logos.map((Icon) => {
-                const palette = ['#006A67', '#FFF4B7', '#640D5F', '#003161']; // teal/yellow/magenta/blue
+                const palette = ['#FFF4B7']; // teal/yellow/magenta/blue
                 const depth = Math.random();
                 return {
                     Icon,

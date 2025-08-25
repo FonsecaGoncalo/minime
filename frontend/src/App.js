@@ -2,16 +2,12 @@ import {useState, useRef, useEffect} from 'react';
 import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
-// import SplitText from './components/SplitText';
 
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
 import {AssistantBubble, UserBubble} from "./components/Bubbles";
 import FlyingLogos from './components/FlyingLogos';
 import Hero from './components/Hero';
-// import TerminalView from './components/TerminalView';
-
-// Old prompt cards removed in favor of RollingPrompts within Hero
 
 export default function App() {
     const [messages, setMessages] = useState([]);
@@ -21,10 +17,6 @@ export default function App() {
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
-    // const [titleReady, setTitleReady] = useState(false);
-    // const onTitleDone = useCallback(() => setTitleReady(true), []);
-
-    // const examplePrompts = useMemo(() => [], []);
 
     useEffect(() => {
         const socket = new WebSocket('wss://api.gfonseca.io');
@@ -162,7 +154,7 @@ export default function App() {
                             {/* Chat history */}
                             <section className="flex-1 overflow-y-auto overscroll-contain px-4">
                                 <div
-                                    className="flex flex-col gap-4 pt-10 max-w-screen-md w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
+                                    className="flex flex-col gap-4 pt-16 max-w-screen-md w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
                                     {messages.map((m, i) => (
                                         <motion.div
                                             key={i}
