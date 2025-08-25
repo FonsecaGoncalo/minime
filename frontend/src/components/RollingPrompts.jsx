@@ -23,6 +23,8 @@ export default function RollingPrompts({
     return sets.map((set) => (set.length ? set : base));
   }, [prompts, rows]);
 
+  // Build per-row data (repeated items and direction)
+
   // Dimming measurement via rAF (avoids IO churn with transforms). Adds a margin to reduce flicker.
   useEffect(() => {
     const root = containerRef.current;
@@ -65,29 +67,30 @@ export default function RollingPrompts({
     };
   }, [prompts, rows]);
 
-  // Build per-row data (duration/direction and 4x repeated items) without nested hooks
+  // No auto-scroll JS (CSS keyframes handle it); respect reduced motion via CSS override
+
+  // Build per-row data (repeated items and direction)
   const rowsData = useMemo(() => {
-    const baseDur = Math.max(30, Math.min(600, durationSec));
-    const repeat4 = (arr) => [...arr, ...arr, ...arr, ...arr];
+    // Build items repeated 4x to ensure wide track and seamless loop
+    const repeatN = (arr, n) => Array.from({ length: n }, () => arr).flat();
     return rowSets.map((set, i) => ({
-      items: repeat4(set || []),
-      duration: baseDur + (i - 1) * 6, // middle a bit faster, top/bottom slower
+      items: repeatN(set || [], 4),
       reverse: i === 1,
+      index: i,
     }));
-  }, [rowSets, durationSec]);
+  }, [rowSets]);
+
+  // No runtime speed state needed; CSS handles timing.
 
   return (
     <div className={`relative w-full overflow-hidden rp-group ${className}`} ref={containerRef}>
-      {/* Edge fades */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-edge/95 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-edge/95 to-transparent" />
 
       <div className="w-full">
         {rowsData.map((row, rowIndex) => (
           <div key={rowIndex} className="my-1.5">
             <div
-          className={`rp-anim ${row.reverse ? 'rp-rev' : ''} flex flex-nowrap gap-1.5 sm:gap-2 items-center will-change-transform min-w-[200%]`}
-              style={{ ['--rp-duration']: `${Math.max(30, Math.min(600, row.duration))}s` }}
+              className={`rp-anim ${row.reverse ? 'rp-rev' : ''} flex flex-nowrap gap-1.5 sm:gap-2 items-center will-change-transform min-w-[200%]`}
+              style={{ ['--rp-duration']: `${Math.max(30, Math.min(600, durationSec + (rowIndex - 1) * 6))}s` }}
             >
               {row.items.map((p, i) => (
                 <button
@@ -100,9 +103,9 @@ export default function RollingPrompts({
                   <span className="rp-text leading-snug w-full">{p}</span>
                   <ArrowUpRightIcon className="pointer-events-none absolute bottom-1.5 right-1.5 w-4 h-4 text-muted group-hover:text-ink transition-colors" aria-hidden="true" />
                 </button>
-          ))}
-        </div>
-      </div>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
 
@@ -114,6 +117,7 @@ export default function RollingPrompts({
         @keyframes rp-scroll { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-50%,0,0); } }
         @media (prefers-reduced-motion: reduce) { .rp-anim { animation: none !important; transform: none !important; } }
         .rp-text{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
       `}</style>
     </div>
   );

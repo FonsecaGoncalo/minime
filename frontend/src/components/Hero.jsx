@@ -32,40 +32,42 @@ export default function Hero({onSend, value, setValue, disabled}) {
     const onTitleDone = useCallback(() => setTitleReady(true), []);
 
     return (
-        <div className="w-full max-w-6xl px-4 mx-auto flex flex-col items-center justify-start min-h-[80vh] relative z-10">
+        <div className="w-full max-w-6xl px-4 mx-auto flex flex-col items-center min-h-[100svh] relative z-10">
+          {/* Top block centered vertically within available space above prompts */}
+          <div className="flex-1 w-full flex flex-col items-center justify-center">
             {/* Heading */}
-      <div className="w-[92vw] max-w-[980px] mx-auto mt-32 sm:mt-40 md:mt-56">
-        <div className="text-ink text-center">
-          <div className="md:max-w-[760px] mx-auto">
-            <h1 className="font-medium text-[22px] leading-7 md:text-2xl md:leading-8">
-              <SplitText text="Hi!" as="span" />
-              <span className={`inline-block align-baseline leading-none ml-2 relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}>👋</span>
-            </h1>
-          </div>
-          <div className="md:max-w-[980px] mx-auto">
-            <h1 className="font-semibold text-[28px] leading-8 md:text-5xl md:leading-[1.15] text-balance">
-              <SplitText
-                text={"I'm Gonçalo, a Software Engineer"}
-                as="span"
-                delay={0.12}
-                highlightWords={["Gonçalo"]}
-                highlightClass="highlight-name"
-                onComplete={onTitleDone}
-              />
-            </h1>
-          </div>
-        </div>
-      </div>
+            <div className="w-[92vw] max-w-[980px] mx-auto">
+              <div className="text-ink text-center">
+                <div className="md:max-w-[760px] mx-auto">
+                  <h1 className="font-medium text-[22px] leading-7 md:text-2xl md:leading-8">
+                    <SplitText text="Hi!" as="span" />
+                    <span className={`inline-block align-baseline leading-none ml-2 relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}>👋</span>
+                  </h1>
+                </div>
+                <div className="md:max-w-[980px] mx-auto">
+                  <h1 className="font-semibold text-[28px] leading-8 md:text-5xl md:leading-[1.15] text-balance">
+                    <SplitText
+                      text={"I'm Gonçalo, a Software Engineer"}
+                      as="span"
+                      delay={0.12}
+                      highlightWords={["Gonçalo"]}
+                      highlightClass="highlight-name"
+                      onComplete={onTitleDone}
+                    />
+                  </h1>
+                </div>
+              </div>
+            </div>
 
             {/* Chat input */}
             <div className="mt-4 sm:mt-5 mb-2">
-                <ChatInput
-                    landing
-                    value={value}
-                    setValue={setValue}
-                    onSend={onSend}
-                    disabled={!!disabled}
-                />
+              <ChatInput
+                landing
+                value={value}
+                setValue={setValue}
+                onSend={onSend}
+                disabled={!!disabled}
+              />
             </div>
 
             {/* Social icons under input */}
@@ -85,30 +87,28 @@ export default function Hero({onSend, value, setValue, disabled}) {
                 />
               </div>
             </div>
+          </div>
 
-            {/* Spacer pushes prompts to bottom of this hero section */}
-            <div className="flex-1" />
-
-            {/* Rolling Prompts - full bleed at the bottom */}
-            <div
-                className="relative mb-0"
-                style={{
-                    width: '100vw',
-                    maxWidth: '100vw',
-                    marginLeft: 'calc(50% - 50vw)',
-                    marginRight: 'calc(50% - 50vw)',
-                    overflow: 'hidden',
-                    paddingBottom: 'env(safe-area-inset-bottom)'
-                }}
-            >
-                <RollingPrompts
-                    prompts={PROMPTS}
-                    durationSec={80}
-                    rows={3}
-                    onSelect={(p) => onSend(p)}
-                    className="w-full"
-                />
-            </div>
+          {/* Rolling Prompts - full bleed at the bottom */}
+          <div
+            className="relative mb-14 sm:mb-16 md:mb-20"
+            style={{
+              width: '100vw',
+              maxWidth: '100vw',
+              marginLeft: 'calc(50% - 50vw)',
+              marginRight: 'calc(50% - 50vw)',
+              overflow: 'hidden',
+              paddingBottom: 'env(safe-area-inset-bottom)'
+            }}
+          >
+            <RollingPrompts
+              prompts={PROMPTS}
+              durationSec={80}
+              rows={3}
+              onSelect={(p) => onSend(p)}
+              className="w-full"
+            />
+          </div>
         </div>
     );
 }
