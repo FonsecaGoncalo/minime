@@ -116,3 +116,16 @@ code {
     animation: none !important;
   }
 }
+
+/* Headline improvements */
+.heading-name {
+  background-image: linear-gradient(90deg, #f87160 0%, #f5a45b 45%, #5cbbb3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Balance multi-line headings for nicer ragged edges */
+.text-balance {
+  text-wrap: balance;
+}

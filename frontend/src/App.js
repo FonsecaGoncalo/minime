@@ -2,33 +2,15 @@ import {useState, useRef, useEffect, useMemo, useCallback} from 'react';
 import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
-import SplitText from './components/SplitText';
+// import SplitText from './components/SplitText';
 
-import {
-    XMarkIcon,
-    SparklesIcon,
-    BriefcaseIcon,
-    CalendarDaysIcon,
-    HeartIcon,
-    WrenchScrewdriverIcon,
-    MusicalNoteIcon,
-    CodeBracketSquareIcon,
-    ChartBarIcon,
-} from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
 import {AssistantBubble, UserBubble} from "./components/Bubbles";
 import FlyingLogos from './components/FlyingLogos';
+import Hero from './components/Hero';
 
-const ALL_PROMPTS = [
-    {text: 'Do you enjoy working on side projects?', Icon: SparklesIcon},
-    {text: 'What kind of projects were you working on at your last job?', Icon: BriefcaseIcon},
-    {text: 'Can I schedule a meeting with you to chat more?', Icon: CalendarDaysIcon},
-    {text: 'Do you have any pets?', Icon: HeartIcon},
-    {text: "What's a side project you've worked on that you're particularly proud of?", Icon: WrenchScrewdriverIcon},
-    {text: 'What do you usually enjoy doing outside of work?', Icon: MusicalNoteIcon},
-    {text: 'How did you get into software engineering?', Icon: CodeBracketSquareIcon},
-    {text: 'Can you tell me a bit about your career journey so far?', Icon: ChartBarIcon},
-];
+// Old prompt cards removed in favor of RollingPrompts within Hero
 
 export default function App() {
     const [messages, setMessages] = useState([]);
@@ -38,17 +20,10 @@ export default function App() {
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
-    const [titleReady, setTitleReady] = useState(false);
-    const onTitleDone = useCallback(() => setTitleReady(true), []);
+    // const [titleReady, setTitleReady] = useState(false);
+    // const onTitleDone = useCallback(() => setTitleReady(true), []);
 
-    const examplePrompts = useMemo(() => {
-        const arr = [...ALL_PROMPTS];
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr.slice(0, 3);
-    }, []);
+    // const examplePrompts = useMemo(() => [], []);
 
     useEffect(() => {
         const socket = new WebSocket('wss://api.gfonseca.io');
@@ -141,74 +116,11 @@ export default function App() {
                     paddingRight: 'env(safe-area-inset-right)'
                 }}
             >
-                <FlyingLogos className="absolute inset-0 z-0" topClip={landing ? 0 : 56} opacity={0.12}/>
+                <FlyingLogos className="absolute inset-0 -z-10" topClip={landing ? 0 : 56} opacity={0.12}/>
 
                 <div className={`relative z-10 ${landing ? '' : 'flex flex-col flex-1 w-full'}`}>
                     {landing ? (
-                        <div className="w-full max-w-screen-md px-4 mx-auto flex flex-col items-center">
-                            <div className="w-[88vw] max-w-[520px] mb-6 self-center">
-                                <div
-                                    className="text-[28px] leading-8 md:text-3xl md:leading-tight font-medium text-gray-900 text-left">
-                                    <h1>
-                                        <SplitText text="Hi!" as="span" />
-                                        <span className={`inline-block align-baseline leading-none ml-2 relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}>👋</span>
-                                    </h1>
-                                    <h1>
-                                        <SplitText
-                                            text={"I'm Gonçalo, a Software Engineer"}
-                                            as="span"
-                                            delay={0.12}
-                                            highlightWords={["Gonçalo"]}
-                                            onComplete={onTitleDone}
-                                        />
-                                    </h1>
-                                </div>
-                            </div>
-
-                            <div className="w-full mb-6">
-                                <div className="overflow-x-auto no-scrollbar -mx-4 overscroll-contain">
-                                    <div className="flex gap-3 snap-x snap-mandatory sm:justify-center px-3 sm:px-0">
-                                        {examplePrompts.map(({text, Icon}) => (
-                                            <button
-                                                key={text}
-                                                onClick={() => send(text)}
-                                                className="flex-shrink-0 snap-start bg-white/90 backdrop-blur text-gray-800 border border-gray-200 rounded-xl p-4 w-3/5 sm:w-48 h-32 flex flex-col justify-between hover:shadow-md transition"
-
-                                            >
-                                                <span className="text-sm leading-snug text-center">{text}</span>
-                                                <Icon className="w-5 h-5 text-[#f87160] self-end"/>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
-                                <ChatInput
-                                    landing
-                                    value={draft}
-                                    setValue={setDraft}
-                                    onSend={send}
-                                    disabled={waiting}
-                                />
-                            </div>
-
-                            {/* Social icons */}
-                            <div className="flex gap-6">
-                                <SocialNetworkBadge
-                                    url="https://github.com/FonsecaGoncalo"
-                                    icon="github"
-                                    size={32}
-                                    className="text-gray-500 hover:text-gray-800"
-                                />
-                                <SocialNetworkBadge
-                                    url="https://www.linkedin.com/in/goncalo-fonseca"
-                                    icon="linkedin"
-                                    size={32}
-                                    className="text-gray-500 hover:text-gray-800"
-                                />
-                            </div>
-                        </div>
+                        <Hero onSend={send} value={draft} setValue={setDraft} disabled={waiting} />
                     ) : (
                         /* ---------- CHAT LAYOUT ---------- */
                         <>
