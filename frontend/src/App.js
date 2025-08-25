@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useMemo, useCallback} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import {motion} from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
@@ -9,6 +9,7 @@ import ErrorBanner from "./components/ErrorBanner";
 import {AssistantBubble, UserBubble} from "./components/Bubbles";
 import FlyingLogos from './components/FlyingLogos';
 import Hero from './components/Hero';
+// import TerminalView from './components/TerminalView';
 
 // Old prompt cards removed in favor of RollingPrompts within Hero
 
@@ -102,6 +103,8 @@ export default function App() {
 
     const landing = messages.length === 0;
 
+    // No toggles
+
     return (
         <>
             <main
@@ -140,6 +143,7 @@ export default function App() {
                                         size={20}
                                         className="text-muted hover:text-brand"
                                     />
+                                    {/* no theme toggles */}
                                     <button
                                         aria-label="Close chat"
                                         onClick={() => {

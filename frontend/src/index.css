@@ -9,8 +9,8 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #E4E8F0; /* ink on dark */
-  background: #0A0F29; /* fallback while app-bg paints (deep navy) */
+  color: #F2F5F7; /* ink on dark */
+  background: #0B0B0D;
 }
 
 code {
@@ -31,19 +31,18 @@ code {
   isolation: isolate;
   z-index: 0;
 
-  /* Deep Navy palette */
-  --space0: #0A0F29; /* outer */
-  --space1: #0E1B47; /* inner 1 */
-  --space2: #0C183F; /* inner 2 */
-  --glow-cyan: rgba(0, 224, 255, 0.18);      /* #00E0FF */
-  --glow-warm: rgba(255, 76, 41, 0.14);      /* #FF4C29 */
-  --glow-indigo: rgba(26, 58, 140, 0.20);    /* #1A3A8C */
+  /* Coverflex palette */
+  --cf-bg0: #0b0b0d;
+  --cf-bg1: #111118;
+  --cf-accent: #FF7A1A;
+  --cf-accent-2: #7C4DFF;
+  --cf-glow-1: rgba(255, 122, 26, 0.18);
+  --cf-glow-2: rgba(124, 77, 255, 0.14);
 
   background:
-    radial-gradient(110% 120% at 78% 20%, var(--glow-cyan), transparent 55%),
-    radial-gradient(95% 70% at 18% 28%, var(--glow-indigo), transparent 60%),
-    radial-gradient(75% 85% at 72% 86%, var(--glow-warm), transparent 65%),
-    linear-gradient(180deg, var(--space0) 0%, var(--space2) 100%);
+    radial-gradient(110% 120% at 78% 22%, var(--cf-glow-1), transparent 55%),
+    radial-gradient(95% 70% at 18% 28%, var(--cf-glow-2), transparent 60%),
+    linear-gradient(180deg, var(--cf-bg0) 0%, var(--cf-bg1) 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
@@ -119,7 +118,7 @@ code {
 
 /* Headline improvements */
 .heading-name {
-  background-image: linear-gradient(90deg, #00E0FF 0%, #1A3A8C 50%, #0E1B47 100%);
+  background-image: linear-gradient(90deg, #FF9A4C 0%, #FF7A1A 35%, #7C4DFF 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -131,17 +130,9 @@ code {
 }
 
 /* Emphasis for role keywords in headline */
-.highlight-role {
-  color: #00E0FF;
-  font-weight: 600;
-}
-.highlight-name {
-  color: #FF4C29;
-  font-weight: 600;
-}
+.highlight-role { color: #FF7A1A; font-weight: 600; }
+/* Emphasis for name */
+.highlight-name { color: #FFD7BF; font-weight: 600; }
 
-/* Emphasis for name without underline */
-.highlight-name {
-  color: #FFF4B7;
-  font-weight: 600;
-}
+/* terminal prompt helpers remain for potential future use */
+@keyframes blink { 50% { opacity: 0; } }

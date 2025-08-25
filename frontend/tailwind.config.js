@@ -7,15 +7,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Deep Navy (Space) palette
-        brand: '#00E0FF',        // Accent 1 (cyan glow)
-        brandAlt: '#FF4C29',     // Accent 2 (warm CTA)
-        edge: '#0A0F29',         // Primary background
-        surface: '#0E1B47',      // Surface / cards / input
-        surfaceAlt: '#1A3A8C',   // Brighter surface for highlights
-        ink: '#E4E8F0',          // Neutral text
-        muted: '#A7B1C5',        // Secondary text
-        borderCosmos: '#142042', // Subtle borders
+        brand: '#FF7A1A',        // Primary accent (orange)
+        brandAlt: '#7C4DFF',     // Secondary accent (purple)
+        edge: '#0B0B0D',         // Primary background
+        surface: '#14141C',      // Surface / cards / input
+        surfaceAlt: '#1D1D2A',   // Brighter surface for highlights
+        ink: '#F2F5F7',          // Neutral text
+        muted: '#B6BFCC',        // Secondary text
+        borderCosmos: '#262637', // Subtle borders
       },
     },
   },

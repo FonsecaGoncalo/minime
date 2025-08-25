@@ -27,7 +27,7 @@ const PROMPTS = [
     'How do you design reliable APIs?',
 ];
 
-export default function Hero({onSend, value, setValue, disabled}) {
+export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
     const [titleReady, setTitleReady] = useState(false);
     const onTitleDone = useCallback(() => setTitleReady(true), []);
 
@@ -67,6 +67,7 @@ export default function Hero({onSend, value, setValue, disabled}) {
                 setValue={setValue}
                 onSend={onSend}
                 disabled={!!disabled}
+                rightExtras={rightExtras}
               />
             </div>
 
