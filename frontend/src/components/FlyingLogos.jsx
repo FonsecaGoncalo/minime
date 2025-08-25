@@ -41,14 +41,14 @@ export default function FlyingLogos({className = ''}) {
     const logoConfigs = useMemo(
         () =>
             logos.map((Icon) => {
-                const palette = ['#f87160', '#f5a45b', '#5cbbb3', '#f7988c']; // coral/orange/teal/pink
+                const palette = ['#006A67', '#FFF4B7', '#640D5F', '#003161']; // teal/yellow/magenta/blue
                 const depth = Math.random();
                 return {
                     Icon,
                     depth,
-                    size: baseSize * (0.6 + Math.random() * 1.1),
+                    size: baseSize * (0.7 + Math.random() * 1.2),
                     color: palette[Math.floor(Math.random() * palette.length)],
-                    opacity: 0.08 + depth * 0.18,
+                    opacity: 0.06 + depth * 0.16,
                     startX: rand(-20, 120),
                     startY: rand(-20, 120),
                     driftX: rand(15, 40) * (Math.random() < 0.5 ? -1 : 1),
