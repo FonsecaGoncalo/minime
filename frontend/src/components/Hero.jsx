@@ -54,7 +54,11 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
                               >
                                 👋
                               </span>{' '}
-                              <span>I'm Gonçalo, a Software Engineer</span>
+                              <span>
+                                I'm{' '}
+                                <span className="underline decoration-blue-500 decoration-1 underline-offset-2">Gonçalo</span>
+                                , a Software Engineer
+                              </span>
                             </h1>
                         </div>
                     </div>
