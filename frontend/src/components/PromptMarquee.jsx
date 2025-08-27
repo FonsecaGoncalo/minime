@@ -1,4 +1,3 @@
-// src/components/PromptMarquee.jsx
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
@@ -22,7 +21,6 @@ function PromptCard({ text, onClick }) {
       aria-label={text}
       title={text}
       onClick={onClick}
-      /* default to dim until first measurement to avoid flash */
       data-dim="1"
     >
       <div className="flex items-start gap-2">
@@ -103,7 +101,6 @@ export default function PromptMarquee({
     }
 
     function loop(ts) {
-      // ~12fps: enough for smooth dim without wasted CPU
       if (ts - lastTsRef.current > 80) {
         measureOnce();
         lastTsRef.current = ts;
@@ -111,11 +108,9 @@ export default function PromptMarquee({
       rafRef.current = requestAnimationFrame(loop);
     }
 
-    // Prime & start
     measureOnce();
     rafRef.current = requestAnimationFrame(loop);
 
-    // Also re-measure on resize
     const onResize = () => measureOnce();
     window.addEventListener('resize', onResize);
 
@@ -125,7 +120,6 @@ export default function PromptMarquee({
     };
   }, [baseLanes.length]);
 
-  // Ensure each row has enough repeated content to fill container seamlessly
   useEffect(() => {
     function computeRepeatsAndDurations() {
       const nextRepeats = [...repeatCounts];
@@ -151,9 +145,8 @@ export default function PromptMarquee({
           changedRepeats = true;
         }
 
-        // Determine duration in seconds for consistent px/sec if provided
         if (speedPps && baseWidth > 0) {
-          const shiftPx = (baseWidth * finalRepeat) / 2; // -50% shift distance
+          const shiftPx = (baseWidth * finalRepeat) / 2;
           const pps = Math.max(4, Math.min(64, speedPps));
           const sec = shiftPx / pps;
           const clampedSec = Math.max(30, Math.min(600, sec));
@@ -162,7 +155,6 @@ export default function PromptMarquee({
             changedDurations = true;
           }
         } else {
-          // Fallback: keep provided base seconds, with slight stagger by row
           const sec = speedBase + i * 2.2;
           if ((durations[i] ?? 0) !== sec) {
             nextDurations[i] = sec;
@@ -175,7 +167,6 @@ export default function PromptMarquee({
       if (changedDurations) setDurations(nextDurations);
     }
 
-    // Compute after paint to get accurate widths
     const id = requestAnimationFrame(computeRepeatsAndDurations);
     window.addEventListener('resize', computeRepeatsAndDurations);
     return () => {

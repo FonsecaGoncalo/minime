@@ -1,5 +1,4 @@
-import React, {useCallback, useState} from 'react';
-import SplitText from './SplitText';
+import React from 'react';
 import ChatInput from './ChatInput';
 import SocialNetworkBadge from './SocialNetworkBadge';
 import RollingPrompts from './RollingPrompts';
@@ -39,12 +38,9 @@ const PROMPTS = [
 
 
 export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
-    const [titleReady, setTitleReady] = useState(false);
-    const onTitleDone = useCallback(() => setTitleReady(true), []);
 
     return (
         <div className="w-full max-w-6xl px-4 mx-auto flex flex-col items-center min-h-[100svh] relative z-10">
-            {/* Top block centered vertically within available space above prompts */}
             <div
                 className="flex-1 w-full flex flex-col items-center justify-center translate-y-4 sm:translate-y-6 md:translate-y-10">
                 {/* Heading */}
@@ -52,29 +48,18 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
                     <div className="text-ink text-center">
                         <div className="md:max-w-[980px] mx-auto">
                             <h1 className="font-semibold text-[28px] leading-8 md:text-5xl md:leading-[1.15] md:text-balance">
-                                <span className="inline-flex items-center gap-2 align-baseline">
-                                  <span>Hi!</span>
-                                  <span
-                                    className={`inline-block align-baseline leading-none relative top-[-0.1em] text-[0.85em] ${titleReady ? 'wave-once' : ''}`}
-                                  >
-                                    👋
-                                  </span>
-                                </span>
-                                <br/>
-                                <SplitText
-                                    text={"I'm Gonçalo, a Software Engineer"}
-                                    as="span"
-                                    delay={0.12}
-                                    highlightWords={["Gonçalo"]}
-                                    highlightClass="highlight-name"
-                                    onComplete={onTitleDone}
-                                />
+                              <span>Hi!</span>{' '}<span
+                                className="inline-block align-baseline leading-none relative top-[-0.1em] text-[0.85em] wave-once"
+                                aria-hidden="true"
+                              >
+                                👋
+                              </span>{' '}
+                              <span>I'm Gonçalo, a Software Engineer</span>
                             </h1>
                         </div>
                     </div>
                 </div>
 
-                {/* Chat input */}
                 <div className="mt-10 sm:mt-12 mb-2">
                     <ChatInput
                         landing
@@ -88,7 +73,6 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
 
             </div>
 
-            {/* Rolling Prompts - full bleed at the bottom */}
             <div
                 className="relative mb-14 sm:mb-16 md:mb-20"
                 style={{
@@ -109,7 +93,6 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
                 />
             </div>
 
-            {/* Social icons footer below prompts */}
             <div className="w-full mb-6 sm:mb-8 md:mb-10 px-4">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="flex items-center justify-center gap-5">

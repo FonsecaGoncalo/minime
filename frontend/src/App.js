@@ -95,8 +95,6 @@ export default function App() {
 
     const landing = messages.length === 0;
 
-    // No toggles
-
     return (
         <>
             <main
@@ -117,23 +115,22 @@ export default function App() {
                     {landing ? (
                         <Hero onSend={send} value={draft} setValue={setDraft} disabled={waiting} />
                     ) : (
-                        /* ---------- CHAT LAYOUT ---------- */
                         <>
                             <header
                                 className="sticky top-0 w-full bg-surface/80 backdrop-blur border-b border-borderCosmos z-10">
-                                <div className="max-w-screen-md w-full mx-auto flex items-center gap-4 px-4 py-3">
-                                    <h1 className="text-ink font-medium flex-1">Gonçalo Fonseca</h1>
+                                <div className="max-w-screen-md w-full mx-auto flex items-center gap-3 sm:gap-4 px-3 py-2 sm:px-4 sm:py-3 min-w-0">
+                                    <h1 className="text-ink font-medium flex-1 min-w-0 truncate text-sm sm:text-base">Gonçalo Fonseca</h1>
                                     <SocialNetworkBadge
                                         url="https://github.com/FonsecaGoncalo"
                                         icon="github"
                                         size={20}
-                                        className="text-muted hover:text-brand"
+                                        className="text-muted hover:text-brand shrink-0"
                                     />
                                     <SocialNetworkBadge
                                         url="https://www.linkedin.com/in/goncalo-fonseca"
                                         icon="linkedin"
                                         size={20}
-                                        className="text-muted hover:text-brand"
+                                        className="text-muted hover:text-brand shrink-0"
                                     />
                                     {/* no theme toggles */}
                                     <button
@@ -144,7 +141,7 @@ export default function App() {
                                             setWaiting(false);
                                             setConnectionVersion(v => v + 1);
                                         }}
-                                        className="text-muted hover:text-brand active:scale-95 transition-transform"
+                                        className="text-muted hover:text-brand active:scale-95 transition-transform shrink-0"
                                     >
                                         <XMarkIcon className="w-5 h-5"/>
                                     </button>

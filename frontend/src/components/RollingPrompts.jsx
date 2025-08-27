@@ -10,12 +10,8 @@ export default function RollingPrompts({
                                        }) {
     const containerRef = useRef(null);
     const chipRefs = useRef([]);
-    const reduceMotion = useMemo(
-        () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-        []
-    );
+    
 
-    // Distribute prompts into N rows round-robin
     const rowSets = useMemo(() => {
         const base = Array.isArray(prompts) ? shuffle(prompts) : [];
         const sets = Array.from({length: Math.max(1, rows)}, () => []);
@@ -23,15 +19,12 @@ export default function RollingPrompts({
         return sets.map((set) => (set.length ? set : base));
     }, [prompts, rows]);
 
-    // Build per-row data (repeated items and direction)
-
-    // Dimming measurement via rAF (avoids IO churn with transforms). Adds a margin to reduce flicker.
     useEffect(() => {
         const root = containerRef.current;
         if (!root) return;
         let raf = 0;
         let last = 0;
-        const EPS = 6; // px safety margin to avoid rapid toggling at edges
+        const EPS = 6;
 
         const measure = (ts) => {
             if (ts - last > 80) {
@@ -58,7 +51,7 @@ export default function RollingPrompts({
 
         raf = requestAnimationFrame(measure);
         const onResize = () => {
-            last = 0; // force a pass next frame
+            last = 0;
         };
         window.addEventListener('resize', onResize);
         return () => {
@@ -67,11 +60,7 @@ export default function RollingPrompts({
         };
     }, [prompts, rows]);
 
-    // No auto-scroll JS (CSS keyframes handle it); respect reduced motion via CSS override
-
-    // Build per-row data (repeated items and direction)
     const rowsData = useMemo(() => {
-        // Build items repeated 4x to ensure wide track and seamless loop
         const repeatN = (arr, n) => Array.from({length: n}, () => arr).flat();
         return rowSets.map((set, i) => ({
             items: repeatN(set || [], 4),
@@ -79,8 +68,6 @@ export default function RollingPrompts({
             index: i,
         }));
     }, [rowSets]);
-
-    // No runtime speed state needed; CSS handles timing.
 
     return (
         <div className={`relative w-full overflow-hidden rp-group ${className}`} ref={containerRef}>
@@ -90,7 +77,7 @@ export default function RollingPrompts({
                     <div key={rowIndex} className="my-1.5">
                         <div
                             className={`rp-anim ${row.reverse ? 'rp-rev' : ''} flex flex-nowrap gap-1.5 sm:gap-2 items-center will-change-transform min-w-[200%]`}
-                            style={{['--rp-duration']: `${Math.max(30, Math.min(600, durationSec + (rowIndex - 1) * 6))}s`}}
+                            style={{ '--rp-duration': `${Math.max(30, Math.min(600, durationSec + (rowIndex - 1) * 6))}s` }}
                         >
                             {row.items.map((p, i) => (
                                 <button
@@ -128,13 +115,10 @@ export default function RollingPrompts({
 function shuffle(array) {
     let currentIndex = array.length;
 
-    // While there remain elements to shuffle
     while (currentIndex !== 0) {
-        // Pick a remaining element
         let randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
 
-        // Swap it with the current element
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex],
             array[currentIndex],

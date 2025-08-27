@@ -12,7 +12,6 @@ import {
 
 const rand = (min, max) => min + Math.random() * (max - min);
 
-/* Smooth deceleration/acceleration at the ends (no snap on reverse) */
 const easeInOutSine = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
 
 export default function FlyingLogos({className = ''}) {
@@ -42,17 +41,17 @@ export default function FlyingLogos({className = ''}) {
         () =>
             logos.map((Icon) => {
                 const palette = [
-                    '#111111', // near-black for contrast dots
-                    '#E5E7EB', // gray-200
-                    '#F3F4F6', // gray-100
-                    '#FFFFFF', // white
-                    '#DBEAFE'  // subtle blue tint
+                    '#111111',
+                    // '#E5E7EB',
+                    // '#F3F4F6',
+                    // '#FFFFFF',
+                    // '#DBEAFE'
                 ];
                 const depth = Math.random();
                 return {
                     Icon,
                     depth,
-                    size: baseSize * (0.7 + Math.random() * 1.2),
+                    size: baseSize * (0.7 + Math.random()),
                     color: palette[Math.floor(Math.random() * palette.length)],
                     opacity: 0.06 + depth * 0.18,
                     startX: rand(-20, 120),

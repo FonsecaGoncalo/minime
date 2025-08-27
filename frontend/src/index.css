@@ -9,8 +9,8 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #0A0A0A; /* ink on light */
-  background: #FFFFFF; /* stark white */
+  color: #0A0A0A;
+  background: #FFFFFF;
 }
 
 code {
@@ -31,11 +31,10 @@ code {
   isolation: isolate;
   z-index: 0;
 
-  /* Minimal Neo‑Brutalist: flat white, no glows */
   --cf-bg0: #FFFFFF;
   --cf-bg1: #FFFFFF;
-  --cf-accent: #2563EB;   /* blue */
-  --cf-accent-2: #1D4ED8; /* deep blue */
+  --cf-accent: #2563EB;
+  --cf-accent-2: #1D4ED8;
 
   background: #FFFFFF;
   background-attachment: fixed;
@@ -54,7 +53,7 @@ code {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0; /* keep background perfectly clean */
+  opacity: 0;
   background-image: none;
 }
 
@@ -105,17 +104,13 @@ code {
   }
 }
 
-/* Headline improvements */
 .heading-name { color: inherit; }
 
-/* Balance multi-line headings for nicer ragged edges */
 .text-balance {
   text-wrap: balance;
 }
 
-/* Emphasis for role keywords in headline */
 .highlight-role { color: #2563EB; font-weight: 600; }
-/* Emphasis for name */
 .highlight-name {
   color: inherit;
   font-weight: 600;
@@ -125,5 +120,4 @@ code {
   text-underline-offset: 0.2em;
 }
 
-/* terminal prompt helpers remain for potential future use */
 @keyframes blink { 50% { opacity: 0; } }
