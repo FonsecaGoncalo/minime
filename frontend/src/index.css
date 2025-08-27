@@ -9,8 +9,8 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #1F2428; /* ink on light */
-  background: #FAFAF8; /* studio edge */
+  color: #0A0A0A; /* ink on light */
+  background: #FFFFFF; /* stark white */
 }
 
 code {
@@ -31,13 +31,13 @@ code {
   isolation: isolate;
   z-index: 0;
 
-  /* Studio Light palette (clean, minimal) */
-  --cf-bg0: #FAFAF8;  /* off-white */
-  --cf-bg1: #F5F5F3;  /* light neutral */
-  --cf-accent: #0EA5E9;   /* teal */
-  --cf-accent-2: #0369A1; /* deep teal */
+  /* Minimal Neo‑Brutalist: flat white, no glows */
+  --cf-bg0: #FFFFFF;
+  --cf-bg1: #FFFFFF;
+  --cf-accent: #2563EB;   /* blue */
+  --cf-accent-2: #1D4ED8; /* deep blue */
 
-  background: linear-gradient(180deg, var(--cf-bg0) 0%, var(--cf-bg1) 100%);
+  background: #FFFFFF;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
@@ -54,8 +54,8 @@ code {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.04;
-  background-image: none; /* keep background clean in Studio Light */
+  opacity: 0; /* keep background perfectly clean */
+  background-image: none;
 }
 
 @media (min-resolution: 2dppx) {
@@ -114,13 +114,13 @@ code {
 }
 
 /* Emphasis for role keywords in headline */
-.highlight-role { color: #0EA5E9; font-weight: 600; }
+.highlight-role { color: #2563EB; font-weight: 600; }
 /* Emphasis for name */
 .highlight-name {
   color: inherit;
   font-weight: 600;
   text-decoration-line: underline;
-  text-decoration-color: #0EA5E9; /* Teal */
+  text-decoration-color: #2563EB; /* Blue */
   text-decoration-thickness: 2px;
   text-underline-offset: 0.2em;
 }

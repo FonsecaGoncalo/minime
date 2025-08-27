@@ -42,11 +42,11 @@ export default function FlyingLogos({className = ''}) {
         () =>
             logos.map((Icon) => {
                 const palette = [
-                    '#E7F5FD', // light teal wash
-                    '#D9EEF8', // soft teal
-                    '#EEF2F6', // cool gray
-                    '#F5F5F3', // neutral alt surface
-                    '#CFEAF7'  // pale teal
+                    '#111111', // near-black for contrast dots
+                    '#E5E7EB', // gray-200
+                    '#F3F4F6', // gray-100
+                    '#FFFFFF', // white
+                    '#DBEAFE'  // subtle blue tint
                 ];
                 const depth = Math.random();
                 return {

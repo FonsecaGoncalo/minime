@@ -7,15 +7,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Studio Light palette — neutral base + single accent (teal)
-        brand: '#0EA5E9',        // Teal accent
-        brandAlt: '#0369A1',     // Deeper teal
-        edge: '#FAFAF8',         // Page background (off‑white)
+        // Minimal Neo‑Brutalist — stark contrast + bold blue accent
+        brand: '#2563EB',        // Electric blue
+        brandAlt: '#1D4ED8',     // Deeper blue
+        edge: '#FFFFFF',         // Pure white background
         surface: '#FFFFFF',      // Cards / surfaces
-        surfaceAlt: '#F5F5F3',   // Subtle alt surface
-        ink: '#1F2428',          // Primary text (charcoal)
-        muted: '#6B7280',        // Secondary text
-        borderCosmos: '#E7E9EC', // Neutral border
+        surfaceAlt: '#FAFAFA',   // Near‑white alt surface
+        ink: '#0A0A0A',          // Near‑black text
+        muted: '#6B7280',        // Secondary gray
+        borderCosmos: '#0A0A0A', // Visible dark border
       },
     },
   },

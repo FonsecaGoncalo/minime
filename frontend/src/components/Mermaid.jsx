@@ -32,11 +32,11 @@ function Mermaid({chart}) {
                     loadExternalDiagrams: false,
                     logLevel: 'fatal',
                     themeVariables: {
-                        primaryColor: '#FAFAF8',
-                        primaryTextColor: '#1F2428',
-                        lineColor: '#0EA5E9',
+                        primaryColor: '#FFFFFF',
+                        primaryTextColor: '#0A0A0A',
+                        lineColor: '#2563EB',
                         secondaryColor: '#FFFFFF',
-                        tertiaryColor: '#F5F5F3'
+                        tertiaryColor: '#FAFAFA'
                     }
                 });
 
