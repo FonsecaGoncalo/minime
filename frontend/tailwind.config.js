@@ -7,14 +7,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: '#FF7A1A',        // Primary accent (orange)
-        brandAlt: '#7C4DFF',     // Secondary accent (purple)
-        edge: '#0B0B0D',         // Primary background
-        surface: '#14141C',      // Surface / cards / input
-        surfaceAlt: '#1D1D2A',   // Brighter surface for highlights
-        ink: '#F2F5F7',          // Neutral text
-        muted: '#B6BFCC',        // Secondary text
-        borderCosmos: '#262637', // Subtle borders
+        // Porcelain Ember palette
+        brand: '#E96A3A',        // Warm coral-orange
+        brandAlt: '#F0B429',     // Golden alt
+        edge: '#FAF7F3',         // App background
+        surface: '#FFFFFF',      // Cards / surfaces
+        surfaceAlt: '#F4EFE8',   // Alt surface
+        ink: '#22252B',          // Primary text
+        muted: '#707680',        // Secondary text
+        borderCosmos: '#E8E1D9', // Neutral border
       },
     },
   },

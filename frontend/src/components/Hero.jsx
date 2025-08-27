@@ -50,15 +50,17 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
                 {/* Heading */}
                 <div className="w-[92vw] max-w-[980px] mx-auto">
                     <div className="text-ink text-center">
-                        <div className="md:max-w-[760px] mx-auto">
-                            <h1 className="font-medium text-[22px] leading-7 md:text-2xl md:leading-8 whitespace-nowrap mb-1 sm:mb-2">
-                                <SplitText text="Hi!" as="span"/>
-                                <span
-                                    className={`inline-block align-baseline leading-none ml-2 relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}>👋</span>
-                            </h1>
-                        </div>
                         <div className="md:max-w-[980px] mx-auto">
                             <h1 className="font-semibold text-[28px] leading-8 md:text-5xl md:leading-[1.15] md:text-balance">
+                                <span className="inline-flex items-center gap-2 align-baseline">
+                                  <span>Hi!</span>
+                                  <span
+                                    className={`inline-block align-baseline leading-none relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}
+                                  >
+                                    👋
+                                  </span>
+                                </span>
+                                <br/>
                                 <SplitText
                                     text={"I'm Gonçalo, a Software Engineer"}
                                     as="span"

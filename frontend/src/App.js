@@ -111,7 +111,7 @@ export default function App() {
                     paddingRight: 'env(safe-area-inset-right)'
                 }}
             >
-                <FlyingLogos className="absolute inset-0 -z-10" topClip={landing ? 0 : 56} opacity={0.12}/>
+                <FlyingLogos className="absolute inset-0 z-0" topClip={landing ? 0 : 56} opacity={0.12}/>
 
                 <div className={`relative z-10 ${landing ? '' : 'flex flex-col flex-1 w-full'}`}>
                     {landing ? (

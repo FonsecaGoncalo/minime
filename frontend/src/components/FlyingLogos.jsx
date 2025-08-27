@@ -41,14 +41,20 @@ export default function FlyingLogos({className = ''}) {
     const logoConfigs = useMemo(
         () =>
             logos.map((Icon) => {
-                const palette = ['#FFF4B7']; // teal/yellow/magenta/blue
+                const palette = [
+                    '#E8E1D9', // neutral line
+                    '#FFC3A6', // light peach
+                    '#FFEDC2', // saffron-10
+                    '#F4EFE8', // bone
+                    '#E96A3A'  // ember (used at low opacity)
+                ];
                 const depth = Math.random();
                 return {
                     Icon,
                     depth,
                     size: baseSize * (0.7 + Math.random() * 1.2),
                     color: palette[Math.floor(Math.random() * palette.length)],
-                    opacity: 0.06 + depth * 0.16,
+                    opacity: 0.10 + depth * 0.20,
                     startX: rand(-20, 120),
                     startY: rand(-20, 120),
                     driftX: rand(15, 40) * (Math.random() < 0.5 ? -1 : 1),
@@ -72,6 +78,7 @@ export default function FlyingLogos({className = ''}) {
                         fontSize: cfg.size,
                         color: cfg.color,
                         opacity: cfg.opacity,
+                        mixBlendMode: 'multiply',
                         willChange: 'transform'
                     }}
                     initial={{

@@ -50,13 +50,13 @@ function MarkdownTypewriter({text = '', speed = 10, finished = false}) {
                         }
                         return inline ? (
                             <code
-                                className="bg-[rgba(124,77,255,0.12)] border border-[#262637] rounded px-1.5 py-[2px] text-ink"
+                                className="bg-[rgba(233,106,58,0.06)] border border-[#E8E1D9] rounded px-1.5 py-[2px] text-ink"
                                 {...props}
                             >
                                 {children}
                             </code>
                         ) : (
-                            <pre className="bg-[#111118] border border-[#262637] rounded-md p-3 overflow-x-auto text-[#E6EDF3] text-[13.5px] leading-relaxed">
+                            <pre className="bg-[#FFF9F5] border border-[#E8E1D9] rounded-md p-3 overflow-x-auto text-[#22252B] text-[13.5px] leading-relaxed">
                                 <code className={`${className || ''} font-mono`} {...props}>{children}</code>
                             </pre>
                         );
