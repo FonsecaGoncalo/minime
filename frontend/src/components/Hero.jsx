@@ -55,7 +55,7 @@ export default function Hero({onSend, value, setValue, disabled, rightExtras}) {
                                 <span className="inline-flex items-center gap-2 align-baseline">
                                   <span>Hi!</span>
                                   <span
-                                    className={`inline-block align-baseline leading-none relative top-[-0.18em] ${titleReady ? 'wave-once' : ''}`}
+                                    className={`inline-block align-baseline leading-none relative top-[-0.1em] text-[0.85em] ${titleReady ? 'wave-once' : ''}`}
                                   >
                                     👋
                                   </span>

@@ -42,11 +42,11 @@ export default function FlyingLogos({className = ''}) {
         () =>
             logos.map((Icon) => {
                 const palette = [
-                    '#E8E1D9', // neutral line
-                    '#FFC3A6', // light peach
-                    '#FFEDC2', // saffron-10
-                    '#F4EFE8', // bone
-                    '#E96A3A'  // ember (used at low opacity)
+                    '#E7F5FD', // light teal wash
+                    '#D9EEF8', // soft teal
+                    '#EEF2F6', // cool gray
+                    '#F5F5F3', // neutral alt surface
+                    '#CFEAF7'  // pale teal
                 ];
                 const depth = Math.random();
                 return {
@@ -54,7 +54,7 @@ export default function FlyingLogos({className = ''}) {
                     depth,
                     size: baseSize * (0.7 + Math.random() * 1.2),
                     color: palette[Math.floor(Math.random() * palette.length)],
-                    opacity: 0.10 + depth * 0.20,
+                    opacity: 0.06 + depth * 0.18,
                     startX: rand(-20, 120),
                     startY: rand(-20, 120),
                     driftX: rand(15, 40) * (Math.random() < 0.5 ? -1 : 1),
