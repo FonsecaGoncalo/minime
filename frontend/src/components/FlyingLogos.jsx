@@ -1,5 +1,5 @@
-import React, {useMemo, useState, useEffect} from 'react';
-import {motion} from 'framer-motion';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
     SiOpenjdk, SiPython, SiTerraform, SiAmazonwebservices, SiAmazonrds, SiKubernetes,
     SiAwslambda, SiAwsfargate, SiCircleci, SiGithubactions, SiAwssecretsmanager,
@@ -12,24 +12,54 @@ import {
 
 const rand = (min, max) => min + Math.random() * (max - min);
 
+// Google/Antigravity inspired vibrant palette
+const VIBRANT_PALETTE = [
+    '#4285F4', // Google Blue
+    '#DB4437', // Google Red
+    '#F4B400', // Google Yellow
+    '#0F9D58', // Google Green
+    '#AB47BC', // Purple
+    '#00ACC1', // Cyan
+    '#FF7043', // Orange
+];
+
 const easeInOutSine = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
 
-export default function FlyingLogos({className = ''}) {
+function FlyingLogos({ className = '' }) {
+    const containerRef = useRef(null);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
     const getBaseIconSize = () =>
-        typeof window !== 'undefined' && window.innerWidth < 640 ? 10 : 26;
+        typeof window !== 'undefined' && window.innerWidth < 640 ? 10 : 20;
 
     const [baseSize, setBaseSize] = useState(getBaseIconSize());
+
     useEffect(() => {
         const onResize = () => setBaseSize(getBaseIconSize());
+        const onMouseMove = (e) => {
+            // Optimization: Use CSS variables for the mask to avoid full React renders.
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                containerRef.current.style.setProperty('--mouse-x', `${x}px`);
+                containerRef.current.style.setProperty('--mouse-y', `${y}px`);
+            }
+        };
+
         window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
+        window.addEventListener('mousemove', onMouseMove);
+        return () => {
+            window.removeEventListener('resize', onResize);
+            window.removeEventListener('mousemove', onMouseMove);
+        };
     }, []);
 
     const logos = useMemo(
         () => [
             SiVagrant, SiPodman, SiTravisci, SiSwagger, SiSonarqube, SiRenovate, SiPostman, SiKotlin, SiGradle,
             SiGooglecloud, SiGit, SiDocker, SiIntellijidea, SiNotion, SiConfluence, SiJira, SiBitbucket, SiGithub,
-            SiBruno, SiAmazonsqs, SiAmazons3, SiAmazonroute53, SiJavascript, SiGo, SiJenkins, SiPagerduty, SiStripe,
+            SiBruno, SiAmazonsqs, SiAmazons3, SiAmazonroute53, SiJavascript, SiGo, SiGit, SiGooglecloud, SiGradle,
             SiDatadog, SiAmazondynamodb, SiPulumi, SiSpringboot, SiMysql, SiPostgresql, SiAwssecretsmanager,
             SiGithubactions, SiCircleci, SiAwsfargate, SiAwslambda, SiKubernetes, SiOpenjdk, SiPython, SiTerraform,
             SiAmazonwebservices, SiAmazonrds
@@ -39,96 +69,106 @@ export default function FlyingLogos({className = ''}) {
 
     const logoConfigs = useMemo(
         () =>
-            logos.map((Icon) => {
-                const palette = [
-                    '#111111',
-                    // '#E5E7EB',
-                    // '#F3F4F6',
-                    // '#FFFFFF',
-                    // '#DBEAFE'
-                ];
+            logos.map((Icon, i) => {
                 const depth = Math.random();
+                const color = VIBRANT_PALETTE[Math.floor(Math.random() * VIBRANT_PALETTE.length)];
+
                 return {
                     Icon,
                     depth,
-                    size: baseSize * (0.7 + Math.random()),
-                    color: palette[Math.floor(Math.random() * palette.length)],
-                    opacity: 0.06 + depth * 0.18,
-                    startX: rand(-20, 120),
-                    startY: rand(-20, 120),
-                    driftX: rand(15, 40) * (Math.random() < 0.5 ? -1 : 1),
-                    driftY: rand(10, 30) * (Math.random() < 0.5 ? -1 : 1),
-                    durationX: rand(18, 35),
-                    durationY: rand(20, 38),
-                    delay: rand(0, 8),
-                    wobble: rand(2, 6)
+                    size: baseSize * (0.5 + depth * 1.5),
+                    color, // Store the vibrant color
+
+                    // Initial Position
+                    startX: rand(0, 100),
+                    startY: rand(0, 100),
+
+                    // Floating Animation
+                    duration: rand(15, 30), // Much faster: 15-30s instead of 20-60s
+                    yOffset: rand(40, 120) * (Math.random() > 0.5 ? 1 : -1), // Move further vertically
+                    xOffset: rand(30, 80) * (Math.random() > 0.5 ? 1 : -1), // Add horizontal drift
+
+                    rotateDuration: rand(30, 80),
+                    rotateDir: Math.random() > 0.5 ? 1 : -1,
+
+                    delay: rand(0, -20)
                 };
             }),
         [logos, baseSize]
     );
 
     return (
-        <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
+        <div
+            ref={containerRef}
+            className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}
+        >
+            {/* Layer 1: Grayscale Background */}
             {logoConfigs.map((cfg, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute"
-                    style={{
-                        fontSize: cfg.size,
-                        color: cfg.color,
-                        opacity: cfg.opacity,
-                        mixBlendMode: 'multiply',
-                        willChange: 'transform'
-                    }}
-                    initial={{
-                        x: `${cfg.startX}vw`,
-                        y: `${cfg.startY}vh`,
-                        rotate: 0,
-                        scale: 1 - cfg.depth * 0.05
-                    }}
-                    animate={{
-                        x: [`${cfg.startX}vw`, `${cfg.startX + cfg.driftX}vw`, `${cfg.startX}vw`],
-                        y: [`${cfg.startY}vh`, `${cfg.startY + cfg.driftY}vh`, `${cfg.startY}vh`],
-                        rotate: [-cfg.wobble, cfg.wobble, -cfg.wobble],
-                        scale: [1, 1 + (0.02 + cfg.depth * 0.03), 1],
-                    }}
-                    transition={{
-                        /* Smooth out the reversals: use sine easing per segment */
-                        x: {
-                            duration: cfg.durationX,
-                            ease: [easeInOutSine, easeInOutSine],
-                            times: [0, 0.5, 1],
-                            repeat: Infinity,
-                            repeatType: 'mirror',
-                            delay: cfg.delay,
-                            type: 'tween'
-                        },
-                        y: {
-                            duration: cfg.durationY,
-                            ease: [easeInOutSine, easeInOutSine],
-                            times: [0, 0.5, 1],
-                            repeat: Infinity,
-                            repeatType: 'mirror',
-                            delay: cfg.delay * 0.7,
-                            type: 'tween'
-                        },
-                        rotate: {
-                            duration: cfg.durationX * 0.9,
-                            ease: 'easeInOut',
-                            repeat: Infinity,
-                            repeatType: 'mirror'
-                        },
-                        scale: {
-                            duration: cfg.durationY * 0.8,
-                            ease: 'easeInOut',
-                            repeat: Infinity,
-                            repeatType: 'mirror'
-                        }
-                    }}
-                >
-                    <cfg.Icon/>
-                </motion.div>
+                <LogoItem key={`bg-${i}`} cfg={cfg} isColored={false} />
             ))}
+
+            {/* Layer 2: Colorful Reveal (Masked) */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    maskImage: 'radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent)',
+                    WebkitMaskImage: 'radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent)',
+                }}
+            >
+                {logoConfigs.map((cfg, i) => (
+                    <LogoItem key={`fg-${i}`} cfg={cfg} isColored={true} />
+                ))}
+            </div>
+
+            {/* Overlay Gradient to fade edges slightly */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80 pointer-events-none" />
         </div>
     );
 }
+
+const LogoItem = React.memo(({ cfg, isColored }) => (
+    <motion.div
+        className="absolute will-change-transform"
+        style={{
+            fontSize: cfg.size,
+            // If isColored, usage actual vibrant color. If not, use dark gray.
+            color: isColored ? cfg.color : '#121317',
+            // If isColored, fully opaque. If not, faint.
+            opacity: isColored ? 0.8 : (cfg.depth > 0.7 ? 0.03 : (0.05 + Math.random() * 0.05)),
+            // Only blur the background (non-colored) ones to make the colored ones pop sharp
+            filter: !isColored && cfg.depth > 0.8 ? `blur(${rand(1, 3)}px)` : 'none',
+            left: `${cfg.startX}%`,
+            top: `${cfg.startY}%`,
+        }}
+        animate={{
+            y: [0, cfg.yOffset, 0],
+            x: [0, cfg.xOffset, 0],
+            rotate: [0, 360 * cfg.rotateDir],
+        }}
+        transition={{
+            y: {
+                duration: cfg.duration,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "mirror",
+                delay: cfg.delay
+            },
+            x: {
+                duration: cfg.duration * 1.2, // Slightly offset timing for organic feel
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "mirror",
+                delay: cfg.delay
+            },
+            rotate: {
+                duration: cfg.rotateDuration,
+                ease: "linear",
+                repeat: Infinity
+            }
+        }}
+    >
+        <cfg.Icon />
+    </motion.div>
+));
+
+export default React.memo(FlyingLogos);

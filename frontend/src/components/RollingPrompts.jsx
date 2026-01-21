@@ -1,129 +1,64 @@
-import React, {useEffect, useMemo, useRef} from 'react';
-import {ArrowUpRightIcon} from '@heroicons/react/24/outline';
+import React, { useMemo, useState, useEffect } from 'react';
+import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function RollingPrompts({
-                                           prompts,
-                                           onSelect,
-                                           durationSec = 80,
-                                           className = '',
-                                           rows = 3,
-                                       }) {
-    const containerRef = useRef(null);
-    const chipRefs = useRef([]);
-    
+const getRandomPrompts = (allPrompts, count = 3) => {
+    if (!allPrompts || allPrompts.length === 0) return [];
+    const shuffled = [...allPrompts].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+};
 
-    const rowSets = useMemo(() => {
-        const base = Array.isArray(prompts) ? shuffle(prompts) : [];
-        const sets = Array.from({length: Math.max(1, rows)}, () => []);
-        base.forEach((p, i) => sets[i % sets.length].push(p));
-        return sets.map((set) => (set.length ? set : base));
-    }, [prompts, rows]);
+export default function RollingPrompts({ prompts, onSelect, className = '' }) {
+    const [displayPrompts, setDisplayPrompts] = useState(() => getRandomPrompts(prompts, 3));
+    const [key, setKey] = useState(0);
 
     useEffect(() => {
-        const root = containerRef.current;
-        if (!root) return;
-        let raf = 0;
-        let last = 0;
-        const EPS = 6;
+        const intervalId = setInterval(() => {
+            setDisplayPrompts(getRandomPrompts(prompts, 3));
+            setKey(k => k + 1);
+        }, 6000);
 
-        const measure = (ts) => {
-            if (ts - last > 80) {
-                const rootRect = root.getBoundingClientRect();
-                const leftBound = rootRect.left + EPS;
-                const rightBound = rootRect.right - EPS;
-                chipRefs.current.forEach((el) => {
-                    if (!el) return;
-                    const r = el.getBoundingClientRect();
-                    const fully = r.left >= leftBound && r.right <= rightBound;
-                    const has50 = el.classList.contains('opacity-50');
-                    if (fully && has50) {
-                        el.classList.remove('opacity-50');
-                        el.classList.add('opacity-100');
-                    } else if (!fully && !has50) {
-                        el.classList.remove('opacity-100');
-                        el.classList.add('opacity-50');
-                    }
-                });
-                last = ts;
-            }
-            raf = requestAnimationFrame(measure);
-        };
-
-        raf = requestAnimationFrame(measure);
-        const onResize = () => {
-            last = 0;
-        };
-        window.addEventListener('resize', onResize);
-        return () => {
-            cancelAnimationFrame(raf);
-            window.removeEventListener('resize', onResize);
-        };
-    }, [prompts, rows]);
-
-    const rowsData = useMemo(() => {
-        const repeatN = (arr, n) => Array.from({length: n}, () => arr).flat();
-        return rowSets.map((set, i) => ({
-            items: repeatN(set || [], 4),
-            reverse: i === 1,
-            index: i,
-        }));
-    }, [rowSets]);
+        return () => clearInterval(intervalId);
+    }, [prompts]);
 
     return (
-        <div className={`relative w-full overflow-hidden rp-group ${className}`} ref={containerRef}>
-
-            <div className="w-full">
-                {rowsData.map((row, rowIndex) => (
-                    <div key={rowIndex} className="my-1.5">
-                        <div
-                            className={`rp-anim ${row.reverse ? 'rp-rev' : ''} flex flex-nowrap gap-1.5 sm:gap-2 items-center will-change-transform min-w-[200%]`}
-                            style={{ '--rp-duration': `${Math.max(30, Math.min(600, durationSec + (rowIndex - 1) * 6))}s` }}
+        <div className={`w-full flex flex-col items-center justify-center gap-3 h-[60px] ${className}`}>
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4, ease: "easeInOut", staggerChildren: 0.1 }}
+                    className="flex flex-nowrap items-center justify-center gap-2 sm:gap-3 px-4 w-full overflow-x-auto no-scrollbar scroll-smooth"
+                >
+                    {displayPrompts.map((p, i) => (
+                        <motion.button
+                            key={`${key}-${i}`}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: i * 0.1 }}
+                            onClick={() => onSelect && onSelect(p.question)}
+                            className="
+                                group relative flex items-center gap-2
+                                px-4 py-2
+                                rounded-full border border-border-light bg-surface/50 backdrop-blur-sm
+                                text-xs sm:text-sm font-medium text-ink-light
+                                transition-all duration-300 ease-out
+                                hover:bg-white hover:border-brand-light hover:shadow-lg hover:shadow-brand-light/10
+                                hover:-translate-y-0.5 hover:text-ink
+                                active:scale-95
+                                whitespace-nowrap flex-shrink-0
+                            "
                         >
-                            {row.items.map((p, i) => (
-                                <button
-                                    key={`${rowIndex}-${p}-${i}`}
-                                    ref={(el) => (chipRefs.current[rowIndex * 10000 + i] = el)}
-                                    type="button"
-                                    onClick={() => onSelect && onSelect(p)}
-                                    className="rp-chip group relative inline-flex items-center select-none rounded-md border border-borderCosmos bg-surface/80 backdrop-blur text-ink shadow-sm transition-colors hover:bg-surface/90 focus:outline-none focus:ring-2 focus:ring-brand/30 ring-offset-1 ring-offset-surface opacity-100 px-3.5 pr-7 sm:px-4 sm:pr-8 py-2 sm:py-2.5 h-14 text-xs sm:text-sm text-left whitespace-normal break-words min-w-[220px] sm:min-w-[260px] md:min-w-[300px] max-w-[560px] sm:max-w-[720px] md:max-w-[920px]"
-                                >
-                                    <span className="rp-text leading-snug w-full">{p}</span>
-                                    <ArrowUpRightIcon
-                                        className="pointer-events-none absolute bottom-1.5 right-1.5 w-4 h-4 text-muted group-hover:text-brand transition-colors"
-                                        aria-hidden="true"/>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <style>{`
-        /* Pause only the hovered row/track, not all rows */
-        .rp-anim:hover { animation-play-state: paused; }
-        .rp-anim { animation: rp-scroll var(--rp-duration, 80s) linear infinite; backface-visibility: hidden; transform: translate3d(0,0,0); }
-        .rp-anim.rp-rev { animation-direction: reverse; }
-        @keyframes rp-scroll { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-50%,0,0); } }
-        @media (prefers-reduced-motion: reduce) { .rp-anim { animation: none !important; transform: none !important; } }
-        .rp-text{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-
-      `}</style>
+                            <span>{p.label}</span>
+                            <ArrowLongRightIcon
+                                className="w-3.5 h-3.5 text-ink-lighter opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex-shrink-0"
+                            />
+                        </motion.button>
+                    ))}
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
-}
-
-function shuffle(array) {
-    let currentIndex = array.length;
-
-    while (currentIndex !== 0) {
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex],
-        ];
-    }
-
-    return array;
 }

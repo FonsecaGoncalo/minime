@@ -1,13 +1,13 @@
-import {useState, useRef, useEffect} from 'react';
-import {motion} from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
-
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
-import {AssistantBubble, UserBubble} from "./components/Bubbles";
-import FlyingLogos from './components/FlyingLogos';
+import { AssistantBubble, UserBubble } from "./components/Bubbles";
 import Hero from './components/Hero';
+import FlyingLogos from './components/FlyingLogos';
+import Resume from './components/Resume';
 
 export default function App() {
     const [messages, setMessages] = useState([]);
@@ -15,6 +15,7 @@ export default function App() {
     const [waiting, setWaiting] = useState(false);
     const [error, setError] = useState(null);
     const [connectionVersion, setConnectionVersion] = useState(0);
+    const [view, setView] = useState('home'); // 'home' | 'resume'
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
 
@@ -42,7 +43,7 @@ export default function App() {
                         last.loading = false;
                         return [...prev];
                     }
-                    return [...prev, {role: 'assistant', content: data.content, finished: false, loading: false}];
+                    return [...prev, { role: 'assistant', content: data.content, finished: false, loading: false }];
                 });
             }
 
@@ -50,7 +51,7 @@ export default function App() {
                 setMessages((prev) => {
                     const last = prev[prev.length - 1];
                     if (last?.role === 'assistant') {
-                        return [...prev.slice(0, -1), {...last, finished: true, loading: false}];
+                        return [...prev.slice(0, -1), { ...last, finished: true, loading: false }];
                     }
                     return prev;
                 });
@@ -74,14 +75,14 @@ export default function App() {
 
         setMessages((prev) => [
             ...prev,
-            {role: 'user', content: text},
-            {role: 'assistant', content: '', finished: false, loading: true},
+            { role: 'user', content: text },
+            { role: 'assistant', content: '', finished: false, loading: true },
         ]);
 
         const ws = socketRef.current;
-        const doSend = () => ws?.send(JSON.stringify({message: text}));
+        const doSend = () => ws?.send(JSON.stringify({ message: text }));
         if (ws && ws.readyState === WebSocket.CONNECTING) {
-            ws.addEventListener('open', doSend, {once: true});
+            ws.addEventListener('open', doSend, { once: true });
         } else {
             doSend();
         }
@@ -90,101 +91,147 @@ export default function App() {
     };
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+        const lastMsg = messages[messages.length - 1];
+        const isStreaming = lastMsg?.loading;
+        bottomRef.current?.scrollIntoView({ behavior: isStreaming ? 'auto' : 'smooth' });
     }, [messages]);
 
     const landing = messages.length === 0;
 
+    const resetChat = () => {
+        socketRef.current?.close();
+        setMessages([]);
+        setWaiting(false);
+        setConnectionVersion(v => v + 1);
+    };
+
     return (
-        <>
-            <main
-                className={`
-          min-h-dvh w-full app-bg flex flex-col
-          transition-all duration-500
-          ${landing ? 'items-center justify-center' : ''}
-        `}
-                style={{
-                    paddingTop: 'env(safe-area-inset-top)',
-                    paddingLeft: 'env(safe-area-inset-left)',
-                    paddingRight: 'env(safe-area-inset-right)'
-                }}
-            >
-                <FlyingLogos className="absolute inset-0 z-0" topClip={landing ? 0 : 56} opacity={0.12}/>
+        <main
+            className={`
+                min-h-dvh w-full app-bg
+                transition-all duration-700 ease-in-out
+                ${(landing && view !== 'resume') ? 'flex items-center justify-center' : 'flex flex-col'}
+            `}
+            style={{
+                paddingTop: 'env(safe-area-inset-top)',
+                paddingLeft: 'env(safe-area-inset-left)',
+                paddingRight: 'env(safe-area-inset-right)'
+            }}
+        >
+            <FlyingLogos className="z-0 opacity-100" />
 
-                <div className={`relative z-10 ${landing ? '' : 'flex flex-col flex-1 w-full'}`}>
-                    {landing ? (
-                        <Hero onSend={send} value={draft} setValue={setDraft} disabled={waiting} />
-                    ) : (
-                        <>
-                            <header
-                                className="sticky top-0 w-full bg-surface/80 backdrop-blur border-b border-borderCosmos z-10">
-                                <div className="max-w-screen-md w-full mx-auto flex items-center gap-3 sm:gap-4 px-3 py-2 sm:px-4 sm:py-3 min-w-0">
-                                    <h1 className="text-ink font-medium flex-1 min-w-0 truncate text-sm sm:text-base">Gonçalo Fonseca</h1>
-                                    <SocialNetworkBadge
-                                        url="https://github.com/FonsecaGoncalo"
-                                        icon="github"
-                                        size={20}
-                                        className="text-muted hover:text-brand shrink-0"
-                                    />
-                                    <SocialNetworkBadge
-                                        url="https://www.linkedin.com/in/goncalo-fonseca"
-                                        icon="linkedin"
-                                        size={20}
-                                        className="text-muted hover:text-brand shrink-0"
-                                    />
-                                    {/* no theme toggles */}
-                                    <button
-                                        aria-label="Close chat"
-                                        onClick={() => {
-                                            socketRef.current?.close();
-                                            setMessages([]);
-                                            setWaiting(false);
-                                            setConnectionVersion(v => v + 1);
-                                        }}
-                                        className="text-muted hover:text-brand active:scale-95 transition-transform shrink-0"
+            <AnimatePresence mode="wait">
+                {view === 'resume' ? (
+                    <Resume
+                        key="resume"
+                        onBack={() => setView('home')}
+                        onDiscuss={(prompt) => {
+                            setView('home');
+                            // Small timeout to allow transition to complete/start before sending not strictly necessary but nice
+                            // Actually React updates are batched, so view change and messages update will trigger render.
+                            // However, we want the chat view to mount first? 
+                            // Using setTimeout(..., 100) might be safer for animations, but standard state update is fine.
+                            // Let's just call it directly.
+                            send(prompt);
+                        }}
+                    />
+                ) : landing ? (
+                    <motion.div
+                        key="hero"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="w-full relative z-10"
+                    >
+                        <Hero
+                            onSend={send}
+                            value={draft}
+                            setValue={setDraft}
+                            disabled={waiting}
+                            onResume={() => setView('resume')}
+                        />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="chat"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex flex-col flex-1 w-full relative z-10 h-[100dvh]"
+                    >
+                        <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/90 backdrop-blur-md border-b border-border-light flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2.5 h-2.5 bg-brand-DEFAULT rounded-full" />
+                                <span className="font-semibold text-lg tracking-tight text-ink">Minime</span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    aria-label="New Chat"
+                                    onClick={resetChat}
+                                    className="p-2 text-ink-light hover:text-brand-DEFAULT hover:bg-accent rounded-full transition-all group"
+                                    title="Start New Chat"
+                                >
+                                    <ArrowPathIcon className="w-5 h-5 group-active:-rotate-180 transition-transform duration-500" />
+                                </button>
+                                <button
+                                    aria-label="Close"
+                                    onClick={resetChat}
+                                    className="p-2 text-ink-light hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                >
+                                    <XMarkIcon className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </header>
+
+                        {/* Chat history */}
+                        <section className="flex-1 overflow-y-auto overscroll-contain px-4 pt-24 pb-4 bg-transparent">
+                            <div className="flex flex-col gap-8 max-w-3xl w-full mx-auto min-h-full justify-end pb-4">
+                                {messages.map((m, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                        className={`flex ${m.role === 'user' ? 'justify-end' : ''}`}
                                     >
-                                        <XMarkIcon className="w-5 h-5"/>
-                                    </button>
-                                </div>
-                            </header>
+                                        {m.role === 'user' ? (
+                                            <UserBubble text={m.content} />
+                                        ) : (
+                                            <AssistantBubble text={m.content} finished={m.finished}
+                                                loading={m.loading} />
+                                        )}
+                                    </motion.div>
+                                ))}
+                                <div ref={bottomRef} className="h-1" />
+                            </div>
+                        </section>
 
-                            {/* Chat history */}
-                            <section className="flex-1 overflow-y-auto overscroll-contain px-4">
-                                <div
-                                    className="flex flex-col gap-4 pt-16 max-w-screen-md w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
-                                    {messages.map((m, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{opacity: 0, y: 8}}
-                                            animate={{opacity: 1, y: 0}}
-                                            transition={{duration: 0.2}}
-                                            className={`flex ${m.role === 'user' ? 'justify-end' : ''}`}
-                                        >
-                                            {m.role === 'user' ? (
-                                                <UserBubble text={m.content}/>
-                                            ) : (
-                                                <AssistantBubble text={m.content} finished={m.finished}
-                                                                 loading={m.loading}/>
-                                            )}
-                                        </motion.div>
-                                    ))}
-                                    <span ref={bottomRef}/>
-                                </div>
-                            </section>
+                        <ChatInput
+                            landing={false}
+                            value={draft}
+                            setValue={setDraft}
+                            onSend={send}
+                            disabled={waiting}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                            <ChatInput
-                                landing={false}
-                                value={draft}
-                                setValue={setDraft}
-                                onSend={send}
-                                disabled={waiting}
-                            />
-                        </>
-                    )}
-                </div>
-
-                {error && <ErrorBanner message={error} onClose={() => setError(null)}/>}
-            </main>
-        </>
+            <AnimatePresence>
+                {error && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        className="fixed bottom-24 left-0 right-0 z-50 px-4 pointer-events-none"
+                    >
+                        <div className="max-w-md mx-auto pointer-events-auto">
+                            <ErrorBanner message={error} onClose={() => setError(null)} />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </main>
     );
 }

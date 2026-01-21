@@ -7,15 +7,35 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Minimal Neo‑Brutalist — stark contrast + bold blue accent
-        brand: '#2563EB',        // Electric blue
-        brandAlt: '#1D4ED8',     // Deeper blue
-        edge: '#FFFFFF',         // Pure white background
-        surface: '#FFFFFF',      // Cards / surfaces
-        surfaceAlt: '#FAFAFA',   // Near‑white alt surface
-        ink: '#0A0A0A',          // Near‑black text
-        muted: '#6B7280',        // Secondary gray
-        borderCosmos: '#0A0A0A', // Visible dark border
+        // Antigravity Palette (Stark & Minimal)
+        brand: {
+          light: '#3C4043',
+          DEFAULT: '#121317', // Primary Charcoal
+          dark: '#000000',
+        },
+        accent: {
+          DEFAULT: '#E8EAED', // Light Gray for secondary buttons
+          hover: '#DADCE0',
+        },
+        surface: '#FFFFFF',
+        surfaceAlt: '#F8F9FA',
+        ink: {
+          DEFAULT: '#121317', // Charcoal
+          light: '#3C4043',   // Medium Gray
+          lighter: '#5F6368', // Light Gray
+        },
+        border: {
+          DEFAULT: '#DADCE0',
+          light: '#F1F3F4',
+        },
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+        'pill': '9999px',
+      },
+      fontFamily: {
+        sans: ['"Outfit"', '"Google Sans"', 'sans-serif'],
       },
     },
   },
