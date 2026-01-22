@@ -95,8 +95,6 @@ export default function App() {
         return () => socket.close();
     }, [connectionVersion]);
 
-    const mainRef = useRef(null);
-
     const send = (textOverride) => {
         const text = (textOverride ?? draft).trim();
         if (!text || waiting) return;
