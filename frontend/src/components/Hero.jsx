@@ -4,17 +4,13 @@ import RollingPrompts from './RollingPrompts';
 import { motion } from 'framer-motion';
 
 const PROMPTS = [
-    { label: "Pets", question: "Do you have any pets?" },
-    { label: "Side Projects", question: "What’s a side project you’re proud of?" },
-    { label: "Tech Stack", question: "What technologies have you worked with?" },
-    { label: "Disaster Recovery", question: "How did you design your disaster recovery strategy?" },
-    { label: "Modular Monolith", question: "How did you migrate a monolith into a modular monolith?" },
-    { label: "EventBridge", question: "How have you used AWS EventBridge in production?" },
-    { label: "AWS Runner Fleet", question: "How does your AWS Runner Fleet provision GitHub runners?" },
-    { label: "Containish", question: "Why did you experiment with building 'containish'?" },
-    { label: "Career", question: "Tell me about your career." },
-    { label: "Travels", question: "Tell me about your trips." },
-    { label: "LLMs", question: "Do you have experience with LLMs?" },
+    { label: "🛠️ Tech Stack", question: "What is your preferred tech stack?" },
+    { label: "🚀 Projects", question: "What projects are you most proud of?" },
+    { label: "📜 Experience", question: "Can you summarize your professional experience?" },
+    { label: "🎓 Education", question: "What is your educational background?" },
+    { label: "🐶 Pets", question: "Do you have any pets?" },
+    { label: "📍 Location", question: "Where are you currently based?" },
+    { label: "✈️ Hobbies", question: "What do you do for fun outside of work?" },
 ];
 
 export default function Hero({ onSend, value, setValue, disabled, rightExtras, onResume }) {
