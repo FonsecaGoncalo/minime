@@ -49,7 +49,7 @@ export default function Hero({ onSend, value, setValue, disabled, rightExtras, o
                         rightExtras={rightExtras}
                     />
                 </div>
-                <div className="mt-8 text-ink-lighter text-sm">
+                <div className="mt-8 text-ink-lighter text-sm w-full">
                     <RollingPrompts
                         prompts={PROMPTS}
                         durationSec={120}
@@ -63,7 +63,7 @@ export default function Hero({ onSend, value, setValue, disabled, rightExtras, o
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, y: [0, 10, 0] }}
                     transition={{ opacity: { delay: 1, duration: 1 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
-                    className="absolute bottom-2 sm:bottom-8 text-ink-lighter/30"
+                    className="absolute bottom-2 sm:bottom-8 text-ink"
                 >
                     <ChevronDownIcon className="w-6 h-6 sm:w-8 sm:h-8" />
                 </motion.div>

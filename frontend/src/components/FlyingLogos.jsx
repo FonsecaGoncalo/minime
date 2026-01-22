@@ -35,23 +35,44 @@ function FlyingLogos({ className = '' }) {
     const [baseSize, setBaseSize] = useState(getBaseIconSize());
 
     useEffect(() => {
-        const onResize = () => setBaseSize(getBaseIconSize());
-        const onMouseMove = (e) => {
-            // Optimization: Use CSS variables for the mask to avoid full React renders.
+        const setProperty = (name, value) => {
             if (containerRef.current) {
-                const rect = containerRef.current.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                containerRef.current.style.setProperty('--mouse-x', `${x}px`);
-                containerRef.current.style.setProperty('--mouse-y', `${y}px`);
+                containerRef.current.style.setProperty(name, value);
             }
         };
 
+        const updatePos = (x, y) => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                setProperty('--mouse-x', `${x - rect.left}px`);
+                setProperty('--mouse-y', `${y - rect.top}px`);
+            }
+        };
+
+        const onResize = () => {
+            setBaseSize(getBaseIconSize());
+            const isMobile = window.innerWidth < 640;
+            setProperty('--mask-radius', isMobile ? '120px' : '350px');
+        };
+
+        const onMouseMove = (e) => updatePos(e.clientX, e.clientY);
+        const onTouchMove = (e) => updatePos(e.touches[0].clientX, e.touches[0].clientY);
+
         window.addEventListener('resize', onResize);
         window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('touchmove', onTouchMove);
+        window.addEventListener('touchstart', onTouchMove);
+
+        // Initial setup
+        onResize();
+        setProperty('--mouse-x', '-1000px'); // Start hidden
+        setProperty('--mouse-y', '-1000px');
+
         return () => {
             window.removeEventListener('resize', onResize);
             window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('touchmove', onTouchMove);
+            window.removeEventListener('touchstart', onTouchMove);
         };
     }, []);
 
@@ -111,8 +132,8 @@ function FlyingLogos({ className = '' }) {
             <div
                 className="absolute inset-0"
                 style={{
-                    maskImage: 'radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent)',
-                    WebkitMaskImage: 'radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black, transparent)',
+                    maskImage: 'radial-gradient(var(--mask-radius, 350px) circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), black, transparent)',
+                    WebkitMaskImage: 'radial-gradient(var(--mask-radius, 350px) circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), black, transparent)',
                 }}
             >
                 {logoConfigs.map((cfg, i) => (

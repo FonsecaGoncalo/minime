@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { ArrowLongRightIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function RollingPrompts({ prompts, onSelect, className = '' }) {
@@ -20,32 +20,31 @@ export default function RollingPrompts({ prompts, onSelect, className = '' }) {
     const currentPrompt = prompts[currentIndex];
 
     return (
-        <div className={`flex items-center justify-center gap-3 ${className}`}>
-            <div
+        <div className={`flex justify-center w-full ${className}`}>
+            <motion.button
+                layout
                 onClick={() => onSelect && onSelect(currentPrompt.question)}
-                className="group flex items-center gap-3 cursor-pointer select-none"
+                className="group flex items-center gap-2.5 px-5 py-2.5 bg-brand-light/5 border border-ink-lighter/10 rounded-full hover:bg-brand-light/10 transition-colors cursor-pointer select-none"
             >
-                <span className="text-ink-lighter/60 text-base sm:text-lg font-light transition-colors group-hover:text-ink-light">
-                    Ask me about
-                </span>
+                <SparklesIcon className="w-4 h-4 text-brand-DEFAULT/70 group-hover:text-brand-DEFAULT transition-colors flex-shrink-0" />
 
-                <div className="relative h-7 sm:h-8 overflow-hidden min-w-[120px]">
-                    <AnimatePresence mode="wait">
+                <div className="relative overflow-hidden h-6 min-w-[10px]">
+                    <AnimatePresence mode="popLayout" initial={false}>
                         <motion.span
                             key={currentPrompt.label}
-                            initial={{ y: 30, opacity: 0 }}
+                            initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -30, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute inset-0 flex items-center text-base sm:text-lg font-medium text-ink group-hover:text-brand-DEFAULT transition-colors"
+                            exit={{ y: -20, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            className="block text-sm sm:text-base font-medium text-ink/80 group-hover:text-ink whitespace-nowrap"
                         >
                             {currentPrompt.label}
                         </motion.span>
                     </AnimatePresence>
                 </div>
 
-                <ArrowLongRightIcon className="w-5 h-5 text-ink-lighter/40 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-            </div>
+                <ArrowLongRightIcon className="w-4 h-4 text-ink-lighter/40 -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex-shrink-0" />
+            </motion.button>
         </div>
     );
 }

@@ -11,13 +11,13 @@ const ExperienceItem = ({ company, role, period, location, description, bullets,
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="mb-12 last:mb-0"
     >
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-2">
+        <div className="flex flex-row items-baseline justify-between mb-2 gap-4">
             <h3 className="text-2xl font-medium text-ink">{company}</h3>
-            <span className="text-sm font-mono text-ink-light bg-surface px-3 py-1 rounded-full border border-border-light">{period}</span>
+            <span className="text-sm font-mono text-ink-light bg-surface px-3 py-1 rounded-full border border-border-light whitespace-nowrap">{period}</span>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
             <span className="text-lg text-ink-light">{role}</span>
-            <span className="hidden sm:inline text-border-DEFAULT">•</span>
+            <span className="text-border-DEFAULT">•</span>
             <span className="text-sm text-ink-lighter">{location}</span>
         </div>
         {description && <p className="text-ink-light leading-relaxed mb-6 font-light">{description}</p>}
@@ -63,7 +63,7 @@ export default function Resume({ onDiscuss }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="min-h-screen w-full pt-24 pb-24"
+            className="min-h-screen w-full pt-12 pb-12 sm:pt-24 sm:pb-24"
         >
             <div className="max-w-4xl mx-auto px-6 md:px-12">
                 {/* Name & Summary */}
@@ -72,9 +72,9 @@ export default function Resume({ onDiscuss }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="mb-24"
+                    className="mb-12 sm:mb-24"
                 >
-                    <h1 className="font-sans font-medium text-6xl sm:text-7xl md:text-8xl tracking-tight text-ink mb-8">
+                    <h1 className="font-sans font-medium text-5xl sm:text-7xl md:text-8xl tracking-tight text-ink mb-8">
                         Gonçalo<br />Fonseca
                     </h1>
                     <p className="text-xl sm:text-2xl text-ink-light leading-relaxed max-w-2xl font-light">
@@ -85,7 +85,7 @@ export default function Resume({ onDiscuss }) {
                 </motion.div>
 
                 {/* Experience Section */}
-                <section className="mb-24">
+                <section className="mb-12 sm:mb-24">
                     <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}

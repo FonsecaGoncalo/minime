@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
@@ -14,9 +14,38 @@ export default function App() {
     const [draft, setDraft] = useState('');
     const [waiting, setWaiting] = useState(false);
     const [error, setError] = useState(null);
+    const [view, setView] = useState('hero');
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
+
+    const touchStart = useRef(null);
+
+    const handleHeroWheel = (e) => {
+        if (e.deltaY > 50) setView('resume');
+    };
+
+    const handleResumeWheel = (e) => {
+        if (e.currentTarget.scrollTop === 0 && e.deltaY < -50) {
+            setView('hero');
+        }
+    };
+
+    const handleTouchStart = (e) => {
+        touchStart.current = e.touches[0].clientY;
+    };
+
+    const handleHeroTouchEnd = (e) => {
+        if (!touchStart.current) return;
+        const deltaY = touchStart.current - e.changedTouches[0].clientY;
+        if (deltaY > 50) setView('resume');
+    };
+
+    const handleResumeTouchEnd = (e) => {
+        if (!touchStart.current) return;
+        const deltaY = touchStart.current - e.changedTouches[0].clientY;
+        if (deltaY < -50 && e.currentTarget.scrollTop === 0) setView('hero');
+    };
 
     useEffect(() => {
         const socket = new WebSocket('wss://api.gfonseca.io');
@@ -66,6 +95,12 @@ export default function App() {
         return () => socket.close();
     }, [connectionVersion]);
 
+    const mainRef = useRef(null);
+    const { scrollY } = useScroll({ container: mainRef });
+    const heroScale = useTransform(scrollY, [0, 400], [1, 0.9]);
+    const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+    const heroY = useTransform(scrollY, [0, 400], [0, 100]);
+
     const send = (textOverride) => {
         const text = (textOverride ?? draft).trim();
         if (!text || waiting) return;
@@ -105,7 +140,7 @@ export default function App() {
     };
 
     return (
-        <main className="w-full h-dvh overflow-y-auto snap-y snap-proximity scroll-smooth text-ink bg-transparent selection:bg-brand-light/30 font-sans">
+        <main className="w-full h-dvh overflow-hidden text-ink bg-transparent selection:bg-brand-light/30 font-sans">
             <FlyingLogos className="fixed inset-0 z-0 opacity-100" />
 
             <AnimatePresence mode="wait">
@@ -118,12 +153,8 @@ export default function App() {
                         transition={{ duration: 0.4 }}
                         className="relative z-10 w-full"
                     >
-                        <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-brand-DEFAULT rounded-full" />
-                                <span className="font-semibold text-lg tracking-tight text-ink">Gonçalo</span>
-                            </div>
-                            <div className="flex items-center gap-4">
+                        <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-end items-center pointer-events-none">
+                            <div className="flex items-center gap-4 pointer-events-auto">
                                 <SocialNetworkBadge
                                     url="https://github.com/FonsecaGoncalo"
                                     icon="github"
@@ -139,16 +170,43 @@ export default function App() {
                             </div>
                         </header>
 
-                        <div className="snap-start shrink-0">
-                            <Hero
-                                onSend={send}
-                                value={draft}
-                                setValue={setDraft}
-                                disabled={waiting}
-                            />
-                        </div>
-                        <div className="snap-start shrink-0">
-                            <Resume onDiscuss={(prompt) => send(prompt)} />
+                        <div className="relative w-full h-full">
+                            <AnimatePresence mode="wait">
+                                {view === 'hero' ? (
+                                    <motion.div
+                                        key="hero"
+                                        initial={{ opacity: 0, y: -50 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -50, transition: { duration: 0.5 } }}
+                                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                        className="h-[100dvh] w-full flex flex-col justify-center"
+                                        onWheel={handleHeroWheel}
+                                        onTouchStart={handleTouchStart}
+                                        onTouchEnd={handleHeroTouchEnd}
+                                    >
+                                        <Hero
+                                            onSend={send}
+                                            value={draft}
+                                            setValue={setDraft}
+                                            disabled={waiting}
+                                        />
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="resume"
+                                        initial={{ opacity: 0, y: 100 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 100, transition: { duration: 0.5 } }}
+                                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                        className="h-[100dvh] w-full overflow-y-auto bg-transparent"
+                                        onWheel={handleResumeWheel}
+                                        onTouchStart={handleTouchStart}
+                                        onTouchEnd={handleResumeTouchEnd}
+                                    >
+                                        <Resume onDiscuss={(prompt) => send(prompt)} />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </motion.div>
                 ) : (
@@ -161,18 +219,10 @@ export default function App() {
                         <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/90 backdrop-blur-md border-b border-border-light flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <div className="w-2.5 h-2.5 bg-brand-DEFAULT rounded-full" />
-                                <span className="font-semibold text-lg tracking-tight text-ink">Minime</span>
+                                <span className="font-semibold text-lg tracking-tight text-ink">Gonçalo</span>
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <button
-                                    aria-label="New Chat"
-                                    onClick={resetChat}
-                                    className="p-2 text-ink-light hover:text-brand-DEFAULT hover:bg-accent rounded-full transition-all group"
-                                    title="Start New Chat"
-                                >
-                                    <ArrowPathIcon className="w-5 h-5 group-active:-rotate-180 transition-transform duration-500" />
-                                </button>
                                 <button
                                     aria-label="Close"
                                     onClick={resetChat}
