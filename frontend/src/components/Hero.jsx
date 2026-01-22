@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import ChatInput from './ChatInput';
-import SocialNetworkBadge from './SocialNetworkBadge';
 import RollingPrompts from './RollingPrompts';
 import { motion } from 'framer-motion';
 
@@ -9,7 +7,6 @@ const PROMPTS = [
     { label: "Pets", question: "Do you have any pets?" },
     { label: "Side Projects", question: "What’s a side project you’re proud of?" },
     { label: "Tech Stack", question: "What technologies have you worked with?" },
-    { label: "Fun Fact", question: "Tell me something fun about yourself!" },
     { label: "Disaster Recovery", question: "How did you design your disaster recovery strategy?" },
     { label: "Modular Monolith", question: "How did you migrate a monolith into a modular monolith?" },
     { label: "EventBridge", question: "How have you used AWS EventBridge in production?" },
