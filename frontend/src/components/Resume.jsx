@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeftIcon, EnvelopeIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
-import SocialNetworkBadge from './SocialNetworkBadge';
+import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 
 const ExperienceItem = ({ company, role, period, location, description, bullets, onDiscuss }) => (
     <motion.div

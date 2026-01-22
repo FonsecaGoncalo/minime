@@ -4,7 +4,7 @@ import {
     SiOpenjdk, SiPython, SiTerraform, SiAmazonwebservices, SiAmazonrds, SiKubernetes,
     SiAwslambda, SiAwsfargate, SiCircleci, SiGithubactions, SiAwssecretsmanager,
     SiPostgresql, SiMysql, SiSpringboot, SiPulumi, SiAmazondynamodb, SiDatadog,
-    SiStripe, SiPagerduty, SiJenkins, SiDocker, SiIntellijidea, SiNotion, SiConfluence,
+    SiDocker, SiIntellijidea, SiNotion, SiConfluence,
     SiJira, SiBitbucket, SiGithub, SiBruno, SiAmazonsqs, SiAmazons3, SiAmazonroute53,
     SiJavascript, SiGo, SiGit, SiGooglecloud, SiGradle, SiKotlin, SiPostman,
     SiRenovate, SiSonarqube, SiSwagger, SiTravisci, SiPodman, SiVagrant
@@ -23,11 +23,10 @@ const VIBRANT_PALETTE = [
     '#FF7043', // Orange
 ];
 
-const easeInOutSine = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+
 
 function FlyingLogos({ className = '' }) {
     const containerRef = useRef(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     const getBaseIconSize = () =>
         typeof window !== 'undefined' && window.innerWidth < 640 ? 10 : 20;

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatInput from './components/ChatInput';
 import SocialNetworkBadge from './components/SocialNetworkBadge';
-import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import ErrorBanner from "./components/ErrorBanner";
 import { AssistantBubble, UserBubble } from "./components/Bubbles";
 import Hero from './components/Hero';
@@ -96,10 +96,6 @@ export default function App() {
     }, [connectionVersion]);
 
     const mainRef = useRef(null);
-    const { scrollY } = useScroll({ container: mainRef });
-    const heroScale = useTransform(scrollY, [0, 400], [1, 0.9]);
-    const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-    const heroY = useTransform(scrollY, [0, 400], [0, 100]);
 
     const send = (textOverride) => {
         const text = (textOverride ?? draft).trim();
