@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import ChatInput from './ChatInput';
 import SocialNetworkBadge from './SocialNetworkBadge';
 import RollingPrompts from './RollingPrompts';
@@ -22,36 +23,6 @@ const PROMPTS = [
 export default function Hero({ onSend, value, setValue, disabled, rightExtras, onResume }) {
     return (
         <div className="w-full h-[100svh] flex flex-col pt-4 pb-4 px-6 md:px-12 bg-transparent relative overflow-hidden">
-            {/* Top Navigation / Brand Area */}
-            <div className="w-full flex justify-between items-center z-20">
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-brand-DEFAULT rounded-full" />
-                    <span className="font-semibold text-lg tracking-tight text-ink">Gonçalo</span>
-                </div>
-                <div className="flex items-center">
-                    <button
-                        onClick={onResume}
-                        className="mr-6 px-4 py-1.5 rounded-full bg-surface border border-border-light text-sm font-medium text-ink-light hover:text-ink hover:border-brand-DEFAULT transition-all"
-                    >
-                        Resume
-                    </button>
-                    <div className="flex items-center gap-4">
-                        <SocialNetworkBadge
-                            url="https://github.com/FonsecaGoncalo"
-                            icon="github"
-                            size={20}
-                            className="text-ink-lighter hover:text-brand-DEFAULT transition-colors"
-                        />
-                        <SocialNetworkBadge
-                            url="https://www.linkedin.com/in/goncalo-fonseca"
-                            icon="linkedin"
-                            size={20}
-                            className="text-ink-lighter hover:text-brand-DEFAULT transition-colors"
-                        />
-                    </div>
-                </div>
-            </div>
-
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col items-center justify-center relative z-10 -mt-10">
                 <motion.div
@@ -87,11 +58,20 @@ export default function Hero({ onSend, value, setValue, disabled, rightExtras, o
                         className="w-full max-w-md mx-auto"
                     />
                 </div>
+
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, y: [0, 10, 0] }}
+                    transition={{ opacity: { delay: 1, duration: 1 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
+                    className="absolute bottom-2 sm:bottom-8 text-ink-lighter/30"
+                >
+                    <ChevronDownIcon className="w-6 h-6 sm:w-8 sm:h-8" />
+                </motion.div>
             </div>
 
             {/* Ambient Background Elements */}
-            <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-brand-light/5 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-brand-light/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-brand-light/2 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-brand-light/2 rounded-full blur-[100px] pointer-events-none" />
         </div>
     );
 }

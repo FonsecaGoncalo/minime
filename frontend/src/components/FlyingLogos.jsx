@@ -121,7 +121,7 @@ function FlyingLogos({ className = '' }) {
             </div>
 
             {/* Overlay Gradient to fade edges slightly */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/10 pointer-events-none" />
         </div>
     );
 }

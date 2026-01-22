@@ -15,7 +15,6 @@ export default function App() {
     const [waiting, setWaiting] = useState(false);
     const [error, setError] = useState(null);
     const [connectionVersion, setConnectionVersion] = useState(0);
-    const [view, setView] = useState('home'); // 'home' | 'resume'
     const socketRef = useRef(null);
     const bottomRef = useRef(null);
 
@@ -106,58 +105,58 @@ export default function App() {
     };
 
     return (
-        <main
-            className={`
-                min-h-dvh w-full app-bg
-                transition-all duration-700 ease-in-out
-                ${(landing && view !== 'resume') ? 'flex items-center justify-center' : 'flex flex-col'}
-            `}
-            style={{
-                paddingTop: 'env(safe-area-inset-top)',
-                paddingLeft: 'env(safe-area-inset-left)',
-                paddingRight: 'env(safe-area-inset-right)'
-            }}
-        >
-            <FlyingLogos className="z-0 opacity-100" />
+        <main className="w-full h-dvh overflow-y-auto snap-y snap-proximity scroll-smooth text-ink bg-transparent selection:bg-brand-light/30 font-sans">
+            <FlyingLogos className="fixed inset-0 z-0 opacity-100" />
 
             <AnimatePresence mode="wait">
-                {view === 'resume' ? (
-                    <Resume
-                        key="resume"
-                        onBack={() => setView('home')}
-                        onDiscuss={(prompt) => {
-                            setView('home');
-                            // Small timeout to allow transition to complete/start before sending not strictly necessary but nice
-                            // Actually React updates are batched, so view change and messages update will trigger render.
-                            // However, we want the chat view to mount first? 
-                            // Using setTimeout(..., 100) might be safer for animations, but standard state update is fine.
-                            // Let's just call it directly.
-                            send(prompt);
-                        }}
-                    />
-                ) : landing ? (
+                {landing ? (
                     <motion.div
-                        key="hero"
+                        key="landing"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
-                        className="w-full relative z-10"
+                        className="relative z-10 w-full"
                     >
-                        <Hero
-                            onSend={send}
-                            value={draft}
-                            setValue={setDraft}
-                            disabled={waiting}
-                            onResume={() => setView('resume')}
-                        />
+                        <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-brand-DEFAULT rounded-full" />
+                                <span className="font-semibold text-lg tracking-tight text-ink">Gonçalo</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <SocialNetworkBadge
+                                    url="https://github.com/FonsecaGoncalo"
+                                    icon="github"
+                                    size={20}
+                                    className="text-ink-lighter hover:text-brand-DEFAULT transition-colors"
+                                />
+                                <SocialNetworkBadge
+                                    url="https://www.linkedin.com/in/goncalo-fonseca"
+                                    icon="linkedin"
+                                    size={20}
+                                    className="text-ink-lighter hover:text-brand-DEFAULT transition-colors"
+                                />
+                            </div>
+                        </header>
+
+                        <div className="snap-start shrink-0">
+                            <Hero
+                                onSend={send}
+                                value={draft}
+                                setValue={setDraft}
+                                disabled={waiting}
+                            />
+                        </div>
+                        <div className="snap-start shrink-0">
+                            <Resume onDiscuss={(prompt) => send(prompt)} />
+                        </div>
                     </motion.div>
                 ) : (
                     <motion.div
                         key="chat"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="flex flex-col flex-1 w-full relative z-10 h-[100dvh]"
+                        className="flex flex-col h-[100dvh] relative z-10 bg-white/50 backdrop-blur-sm"
                     >
                         <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-white/90 backdrop-blur-md border-b border-border-light flex justify-between items-center">
                             <div className="flex items-center gap-2">

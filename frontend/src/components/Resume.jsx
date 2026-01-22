@@ -4,7 +4,13 @@ import { ArrowLeftIcon, EnvelopeIcon, ChatBubbleLeftRightIcon } from '@heroicons
 import SocialNetworkBadge from './SocialNetworkBadge';
 
 const ExperienceItem = ({ company, role, period, location, description, bullets, onDiscuss }) => (
-    <div className="mb-12 last:mb-0">
+    <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-12 last:mb-0"
+    >
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-2">
             <h3 className="text-2xl font-medium text-ink">{company}</h3>
             <span className="text-sm font-mono text-ink-light bg-surface px-3 py-1 rounded-full border border-border-light">{period}</span>
@@ -28,11 +34,17 @@ const ExperienceItem = ({ company, role, period, location, description, bullets,
                 </li>
             ))}
         </ul>
-    </div>
+    </motion.div>
 );
 
 const SkillGroup = ({ title, skills }) => (
-    <div className="mb-8">
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10% 0px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-8"
+    >
         <h4 className="text-sm uppercase tracking-widest text-ink-lighter font-bold mb-4">{title}</h4>
         <div className="flex flex-wrap gap-2">
             {skills.map((skill, i) => (
@@ -41,53 +53,27 @@ const SkillGroup = ({ title, skills }) => (
                 </span>
             ))}
         </div>
-    </div>
+    </motion.div>
 );
 
-export default function Resume({ onBack, onDiscuss }) {
+export default function Resume({ onDiscuss }) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="min-h-screen w-full bg-white pt-24 pb-24"
+            className="min-h-screen w-full pt-24 pb-24"
         >
             <div className="max-w-4xl mx-auto px-6 md:px-12">
-                {/* Header / Nav */}
-                <div className="mb-16 flex justify-between items-start">
-                    <button
-                        onClick={onBack}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border-light hover:border-brand-DEFAULT hover:text-brand-DEFAULT transition-all"
-                    >
-                        <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-sm font-medium">Back to Home</span>
-                    </button>
-
-                    <div className="flex gap-3">
-                        <SocialNetworkBadge
-                            url="mailto:goncalofnsc@gmail.com"
-                            icon="mail"
-                            size={20}
-                            className="bg-surface hover:bg-surfaceAlt"
-                        />
-                        <SocialNetworkBadge
-                            url="https://linkedin.com/in/goncalo-fonseca"
-                            icon="linkedin"
-                            size={20}
-                            className="bg-surface hover:bg-surfaceAlt"
-                        />
-                        <SocialNetworkBadge
-                            url="https://github.com/FonsecaGoncalo"
-                            icon="github"
-                            size={20}
-                            className="bg-surface hover:bg-surfaceAlt"
-                        />
-                    </div>
-                </div>
-
                 {/* Name & Summary */}
-                <div className="mb-24">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-24"
+                >
                     <h1 className="font-sans font-medium text-6xl sm:text-7xl md:text-8xl tracking-tight text-ink mb-8">
                         Gonçalo<br />Fonseca
                     </h1>
@@ -96,14 +82,20 @@ export default function Resume({ onBack, onDiscuss }) {
                         Led architecture and platform modernization as the team scaled 2 to 40+,
                         raising standards in reliability, observability, and incident response.
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Experience Section */}
                 <section className="mb-24">
-                    <h2 className="text-4xl font-medium text-ink mb-12 flex items-center gap-4">
+                    <motion.h2
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="text-4xl font-medium text-ink mb-12 flex items-center gap-4"
+                    >
                         Experience
                         <span className="h-px flex-1 bg-border-light"></span>
-                    </h2>
+                    </motion.h2>
 
                     <ExperienceItem
                         company="Paytient"
@@ -153,10 +145,16 @@ export default function Resume({ onBack, onDiscuss }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Skills */}
                     <section>
-                        <h2 className="text-4xl font-medium text-ink mb-12 flex items-center gap-4">
+                        <motion.h2
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="text-4xl font-medium text-ink mb-12 flex items-center gap-4"
+                        >
                             Skills
                             <span className="h-px flex-1 bg-border-light"></span>
-                        </h2>
+                        </motion.h2>
                         <SkillGroup
                             title="Languages & Frameworks"
                             skills={["Java", "Spring Boot", "Vert.x", "RxJava", "SQL", "JavaScript", "React"]}
@@ -173,10 +171,16 @@ export default function Resume({ onBack, onDiscuss }) {
 
                     {/* Education & Awards */}
                     <section>
-                        <h2 className="text-4xl font-medium text-ink mb-12 flex items-center gap-4">
+                        <motion.h2
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="text-4xl font-medium text-ink mb-12 flex items-center gap-4"
+                        >
                             Education
                             <span className="h-px flex-1 bg-border-light"></span>
-                        </h2>
+                        </motion.h2>
                         <div className="mb-8">
                             <h3 className="text-xl font-medium text-ink">M.Sc. Materials Engineering</h3>
                             <p className="text-ink-light">FEUP (2017)</p>
