@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLongRightIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function RollingPrompts({ prompts, onSelect, className = '' }) {
@@ -26,7 +26,6 @@ export default function RollingPrompts({ prompts, onSelect, className = '' }) {
                 onClick={() => onSelect && onSelect(currentPrompt.question)}
                 className="group flex items-center gap-2.5 px-5 py-2.5 bg-brand-light/5 border border-ink-lighter/10 rounded-full hover:bg-brand-light/10 transition-colors cursor-pointer select-none"
             >
-                {/* <SparklesIcon className="w-4 h-4 text-brand-DEFAULT/70 group-hover:text-brand-DEFAULT transition-colors flex-shrink-0" /> */}
 
                 <div className="relative overflow-hidden h-6 min-w-[10px]">
                     <AnimatePresence mode="popLayout" initial={false}>
