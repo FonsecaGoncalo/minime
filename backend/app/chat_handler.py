@@ -5,6 +5,8 @@ from queue import SimpleQueue
 from threading import Thread
 from typing import TypedDict
 
+from botocore.exceptions import ClientError
+
 from utils import error_messages
 from services import notifications
 from tracing import init_tracing, tracer
@@ -34,6 +36,26 @@ class OutboundMessenger:
         self.operations = SimpleQueue[_Operation]()
         self.endpoint_url = endpoint_url
         self.connection_id = connection_id
+        self.connection_gone = False
+
+    def is_alive(self) -> bool:
+        return not self.connection_gone
+
+    def _post(self, apigw_client, data: str) -> None:
+        if self.connection_gone:
+            return
+        try:
+            apigw_client.post_to_connection(
+                ConnectionId=self.connection_id,
+                Data=data,
+            )
+        except ClientError as e:
+            code = e.response.get("Error", {}).get("Code", "")
+            if code == "GoneException":
+                self.connection_gone = True
+                logger.info("WS connection gone for %s; draining remaining ops", self.connection_id)
+            else:
+                logger.warning("post_to_connection failed (%s): %s", code, e)
 
     def run(self) -> None:
         apigw_client = boto3.client("apigatewaymanagementapi", endpoint_url=self.endpoint_url)
@@ -42,48 +64,31 @@ class OutboundMessenger:
             operation = self.operations.get()
 
             if operation["type"] == "message":
-                apigw_client.post_to_connection(
-                    ConnectionId=self.connection_id,
-                    Data=json.dumps({
-                        "op": "message_chunk",
-                        "content": operation["payload"],
-                    }),
-                )
+                self._post(apigw_client, json.dumps({
+                    "op": "message_chunk",
+                    "content": operation["payload"],
+                }))
             elif operation["type"] == "tool_use":
-                apigw_client.post_to_connection(
-                    ConnectionId=self.connection_id,
-                    Data=json.dumps({
-                        "op": "tool_use",
-                        "name": operation["payload"],
-                    }),
-                )
+                self._post(apigw_client, json.dumps({
+                    "op": "tool_use",
+                    "name": operation["payload"],
+                }))
             elif operation["type"] == "audio_chunk":
-                apigw_client.post_to_connection(
-                    ConnectionId=self.connection_id,
-                    Data=json.dumps({
-                        "op": "audio_chunk",
-                        "turn_id": operation["turn_id"],
-                        "seq": operation["seq"],
-                        "b64_mp3": operation["payload"],
-                        "final": operation.get("final", False),
-                    }),
-                )
+                self._post(apigw_client, json.dumps({
+                    "op": "audio_chunk",
+                    "turn_id": operation["turn_id"],
+                    "seq": operation["seq"],
+                    "b64_mp3": operation["payload"],
+                    "final": operation.get("final", False),
+                }))
             elif operation["type"] == "finish":
-                apigw_client.post_to_connection(
-                    ConnectionId=self.connection_id,
-                    Data=json.dumps({
-                        "op": "finish",
-                    }),
-                )
+                self._post(apigw_client, json.dumps({"op": "finish"}))
                 break
             elif operation["type"] == "error":
-                apigw_client.post_to_connection(
-                    ConnectionId=self.connection_id,
-                    Data=json.dumps({
-                        "op": "error",
-                        "message": operation["payload"],
-                    }),
-                )
+                self._post(apigw_client, json.dumps({
+                    "op": "error",
+                    "message": operation["payload"],
+                }))
                 break
 
     def error(self, payload: str | None) -> None:
@@ -192,6 +197,7 @@ def handler(event, context):
                 on_stream=lambda chunk: outbound_messenger.message(payload=chunk),
                 on_tool=lambda name: outbound_messenger.tool_use(name=name),
                 on_audio=emit_audio if voice else None,
+                is_alive=outbound_messenger.is_alive,
             )
 
             return {"statusCode": 200}

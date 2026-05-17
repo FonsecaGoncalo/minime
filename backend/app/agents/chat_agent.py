@@ -29,8 +29,13 @@ _VOICE_STOP = object()
 class _VoiceWorker:
     """Consumes sentence-sized text chunks on a worker thread, emits base64 mp3 via on_audio."""
 
-    def __init__(self, on_audio: Callable[[str, bool], None]) -> None:
+    def __init__(
+            self,
+            on_audio: Callable[[str, bool], None],
+            is_alive: Callable[[], bool] | None = None,
+    ) -> None:
         self._on_audio = on_audio
+        self._is_alive = is_alive or (lambda: True)
         self._queue: Queue = Queue()
         self._thread = Thread(target=self._run, daemon=True)
         self._thread.start()
@@ -39,10 +44,13 @@ class _VoiceWorker:
         while True:
             sentence = self._queue.get()
             if sentence is _VOICE_STOP:
-                self._on_audio("", True)
+                if self._is_alive():
+                    self._on_audio("", True)
                 return
+            if not self._is_alive():
+                continue
             audio = tts.synthesize(sentence)
-            if audio:
+            if audio and self._is_alive():
                 self._on_audio(base64.b64encode(audio).decode("ascii"), False)
 
     def submit(self, sentence: str) -> None:
@@ -59,6 +67,7 @@ def chat(
         on_stream: Callable[[str], None],
         on_tool: Callable[[str], None] | None = None,
         on_audio: Callable[[str, bool], None] | None = None,
+        is_alive: Callable[[], bool] | None = None,
 ) -> str:
     logger.info("inside chat: %s", message)
     mem = MemoryManager(
@@ -73,10 +82,13 @@ def chat(
 
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
-    voice_worker = _VoiceWorker(on_audio) if on_audio else None
+    alive = is_alive or (lambda: True)
+    voice_worker = _VoiceWorker(on_audio, alive) if on_audio else None
     sentence_buf = tts.SentenceBuffer() if voice_worker else None
 
     def streaming_callback(chunk):
+        if not alive():
+            return
         if chunk.content:
             on_stream(chunk.content)
             if sentence_buf is not None:
@@ -109,9 +121,10 @@ def chat(
             ]).run(messages=messages)
     finally:
         if voice_worker:
-            tail = sentence_buf.flush()
-            if tail:
-                voice_worker.submit(tail)
+            if alive():
+                tail = sentence_buf.flush()
+                if tail:
+                    voice_worker.submit(tail)
             voice_worker.close()
 
     assistant_response = result["messages"][-1].text
