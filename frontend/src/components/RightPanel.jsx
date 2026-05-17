@@ -257,7 +257,7 @@ export default function RightPanel() {
                             letterSpacing: '-0.02em',
                         }}
                     >
-                        Software engineer, based in Porto, Portugal. I enjoy working at the intersection of product and platform — building products that make users' lives easier.
+                        I'm a software engineer based in Porto, Portugal. I enjoy working at the intersection of product and platform — building products that make users' lives easier.
                     </p>
                 </div>
 
