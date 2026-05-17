@@ -28,6 +28,8 @@ jobs:
       TF_VAR_ses_from_email: ${{ secrets.SES_FROM_EMAIL }}
       TF_VAR_ses_to_email: ${{ secrets.SES_TO_EMAIL }}
       TF_VAR_newrelic_license_key: ${{ secrets.NEWRELIC_LICENSE_KEY }}
+      TF_VAR_elevenlabs_api_key: ${{ secrets.ELEVENLABS_API_KEY }}
+      TF_VAR_elevenlabs_voice_id: ${{ secrets.ELEVENLABS_VOICE_ID }}
 
     defaults:
       run:

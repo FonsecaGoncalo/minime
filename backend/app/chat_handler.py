@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 from queue import SimpleQueue
 from threading import Thread
 from typing import TypedDict
@@ -20,9 +21,12 @@ init_tracing("chat_handler")
 _RATE_LIMITER = TokenBucket(TokenBucketConfig(4, 6))
 
 
-class _Operation(TypedDict):
+class _Operation(TypedDict, total=False):
     type: str
     payload: str | None
+    seq: int
+    turn_id: str
+    final: bool
 
 
 class OutboundMessenger:
@@ -51,6 +55,17 @@ class OutboundMessenger:
                     Data=json.dumps({
                         "op": "tool_use",
                         "name": operation["payload"],
+                    }),
+                )
+            elif operation["type"] == "audio_chunk":
+                apigw_client.post_to_connection(
+                    ConnectionId=self.connection_id,
+                    Data=json.dumps({
+                        "op": "audio_chunk",
+                        "turn_id": operation["turn_id"],
+                        "seq": operation["seq"],
+                        "b64_mp3": operation["payload"],
+                        "final": operation.get("final", False),
                     }),
                 )
             elif operation["type"] == "finish":
@@ -87,6 +102,15 @@ class OutboundMessenger:
         self.operations.put(_Operation(
             type="tool_use",
             payload=name,
+        ))
+
+    def audio_chunk(self, turn_id: str, seq: int, b64_mp3: str, final: bool) -> None:
+        self.operations.put(_Operation(
+            type="audio_chunk",
+            payload=b64_mp3,
+            turn_id=turn_id,
+            seq=seq,
+            final=final,
         ))
 
     def finish(self) -> None:
@@ -135,8 +159,18 @@ def handler(event, context):
         try:
             body = json.loads(raw_body)
             message_text = body.get("message", "")
+            voice = bool(body.get("voice", False))
         except json.JSONDecodeError:
             message_text = ""
+            voice = False
+
+        turn_id = uuid.uuid4().hex
+        audio_seq = {"n": 0}
+
+        def emit_audio(b64_mp3: str, final: bool) -> None:
+            seq = audio_seq["n"]
+            audio_seq["n"] += 1
+            outbound_messenger.audio_chunk(turn_id, seq, b64_mp3, final)
 
         messenger_thread = Thread(
             target=lambda: outbound_messenger.run(),
@@ -151,12 +185,13 @@ def handler(event, context):
                 logger.info("Rate limit exceeded for %s", ip)
                 return {"statusCode": 429, "body": "Rate limit exceeded"}
 
-            logger.info("chat: %s", message_text)
+            logger.info("chat: %s (voice=%s)", message_text, voice)
             chat(
                 connection_id,
                 message_text,
                 on_stream=lambda chunk: outbound_messenger.message(payload=chunk),
                 on_tool=lambda name: outbound_messenger.tool_use(name=name),
+                on_audio=emit_audio if voice else None,
             )
 
             return {"statusCode": 200}

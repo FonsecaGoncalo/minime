@@ -41,6 +41,8 @@ resource "aws_lambda_function" "chat_handler" {
       GOOGLE_SERVICE_ACCOUNT                           = var.google_service_account
       SES_TO_EMAIL                                     = var.ses_to_email
       EVENT_BUS_NAME                                   = var.event_bus_name
+      ELEVENLABS_API_KEY                               = var.elevenlabs_api_key
+      ELEVENLABS_VOICE_ID                              = var.elevenlabs_voice_id
       OTEL_LOGS_EXPORTER                               = "otlp"
       OTEL_EXPORTER_OTLP_ENDPOINT                      = "https://otlp.eu01.nr-data.net:4317"
       OTEL_EXPORTER_OTLP_HEADERS                       = "api-key=${var.newrelic_license_key}"

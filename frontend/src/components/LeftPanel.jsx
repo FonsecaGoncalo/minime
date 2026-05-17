@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AssistantBubble, UserBubble } from './Bubbles';
 import { ToolPill } from './ToolPill';
 import FlyingLogos from './FlyingLogos';
+import useSpeechRecognition, { isSpeechRecognitionSupported } from '../hooks/useSpeechRecognition';
 
 const SUGGESTED = [
     "Tech stack?",
@@ -109,8 +110,59 @@ function SuggestedChip({ label, onClick }) {
     );
 }
 
-function Composer({ value, setValue, onSend, onReset, disabled, hasUserMsg }) {
+function MicButton({ listening, disabled, onClick }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={disabled}
+            aria-label={listening ? 'Stop recording' : 'Start voice message'}
+            title={listening ? 'Stop recording' : 'Speak'}
+            className="flex items-center justify-center rounded-full transition-all duration-150 cursor-pointer"
+            style={{
+                width: 36,
+                height: 36,
+                border: 'none',
+                flexShrink: 0,
+                color: listening ? '#fff' : '#5b504a',
+                background: listening
+                    ? 'linear-gradient(135deg, #ec8f3e 0%, #b85a3a 100%)'
+                    : 'transparent',
+                opacity: disabled ? 0.4 : 1,
+                boxShadow: listening ? '0 0 0 4px rgba(184,90,58,0.22)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+                if (!listening && !disabled) {
+                    e.currentTarget.style.background = 'rgba(28,24,21,0.07)';
+                    e.currentTarget.style.color = '#1c1815';
+                }
+            }}
+            onMouseLeave={(e) => {
+                if (!listening) {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#5b504a';
+                }
+            }}
+        >
+            {listening ? (
+                <motion.span
+                    animate={{ scale: [1, 1.18, 1] }}
+                    transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                    className="block w-2.5 h-2.5 rounded-sm bg-white"
+                />
+            ) : (
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="6" y="2" width="4" height="8" rx="2" />
+                    <path d="M3.5 8a4.5 4.5 0 009 0M8 12.5V14" />
+                </svg>
+            )}
+        </button>
+    );
+}
+
+function Composer({ value, setValue, onSend, onReset, disabled, hasUserMsg, listening, interim, onMicToggle, micSupported }) {
     const canSend = !!value.trim() && !disabled;
+    const displayValue = listening && interim ? interim : value;
     return (
         <div
             className="w-full flex items-center gap-2 rounded-full transition-shadow duration-150"
@@ -136,7 +188,7 @@ function Composer({ value, setValue, onSend, onReset, disabled, hasUserMsg }) {
             }}
         >
             <input
-                value={value}
+                value={displayValue}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey && canSend) {
@@ -144,13 +196,24 @@ function Composer({ value, setValue, onSend, onReset, disabled, hasUserMsg }) {
                         onSend();
                     }
                 }}
-                placeholder={hasUserMsg ? 'Ask a follow-up…' : 'Type your question…'}
-                disabled={disabled}
+                placeholder={
+                    listening
+                        ? 'Listening…'
+                        : hasUserMsg ? 'Ask a follow-up…' : 'Type your question…'
+                }
+                disabled={disabled || listening}
                 autoComplete="off"
                 enterKeyHint="send"
                 className="flex-1 bg-transparent border-0 outline-none text-ink font-sans font-medium text-[15px]"
                 style={{ caretColor: '#b85a3a', padding: '11px 0' }}
             />
+            {micSupported && (
+                <MicButton
+                    listening={listening}
+                    disabled={disabled && !listening}
+                    onClick={onMicToggle}
+                />
+            )}
             {hasUserMsg && (
                 <button
                     type="button"
@@ -217,9 +280,16 @@ export default function LeftPanel({
     onSend,
     onReset,
     waiting,
+    audioPlaying,
+    onStopAudio,
 }) {
     const scrollerRef = useRef(null);
     const hasUserMsg = messages.some((m) => m.role === 'user');
+    const micSupported = isSpeechRecognitionSupported();
+
+    const { listening, interim, start, stop } = useSpeechRecognition({
+        onFinal: (text) => onSend(text, { voice: true }),
+    });
 
     useEffect(() => {
         const el = scrollerRef.current;
@@ -230,6 +300,11 @@ export default function LeftPanel({
         const v = (text ?? draft).trim();
         if (!v || waiting) return;
         onSend(text);
+    };
+
+    const toggleMic = () => {
+        if (listening) stop();
+        else start();
     };
 
     return (
@@ -303,6 +378,29 @@ export default function LeftPanel({
                     </div>
                 )}
 
+                {audioPlaying && (
+                    <button
+                        type="button"
+                        onClick={onStopAudio}
+                        className="self-start inline-flex items-center gap-2 text-[12px] text-ink rounded-full cursor-pointer mt-3"
+                        style={{
+                            letterSpacing: '0.3px',
+                            padding: '6px 12px',
+                            background: 'rgba(253,246,232,0.7)',
+                            backdropFilter: 'blur(8px)',
+                            WebkitBackdropFilter: 'blur(8px)',
+                            border: '1px solid rgba(184,90,58,0.55)',
+                        }}
+                    >
+                        <motion.span
+                            animate={{ opacity: [0.4, 1, 0.4] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                            className="block w-1.5 h-1.5 rounded-full bg-accent"
+                        />
+                        Speaking — tap to stop
+                    </button>
+                )}
+
                 <Composer
                     value={draft}
                     setValue={setDraft}
@@ -310,6 +408,10 @@ export default function LeftPanel({
                     onReset={onReset}
                     disabled={waiting}
                     hasUserMsg={hasUserMsg}
+                    listening={listening}
+                    interim={interim}
+                    onMicToggle={toggleMic}
+                    micSupported={micSupported}
                 />
             </div>
         </section>

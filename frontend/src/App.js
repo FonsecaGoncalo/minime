@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ErrorBanner from './components/ErrorBanner';
 import LeftPanel from './components/LeftPanel';
 import RightPanel from './components/RightPanel';
+import useAudioQueue from './hooks/useAudioQueue';
 
 export default function App() {
     const [messages, setMessages] = useState([]);
@@ -10,6 +11,7 @@ export default function App() {
     const [error, setError] = useState(null);
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
+    const audio = useAudioQueue();
 
     useEffect(() => {
         const socket = new WebSocket('wss://api.gfonseca.io');
@@ -51,6 +53,10 @@ export default function App() {
                 });
             }
 
+            if (data.op === 'audio_chunk' && !data.final) {
+                audio.enqueue(data.turn_id, data.b64_mp3);
+            }
+
             if (data.op === 'finish') {
                 setMessages((prev) => {
                     const cleaned = prev.filter((m) => m.role !== 'tool');
@@ -70,22 +76,24 @@ export default function App() {
         };
 
         return () => socket.close();
-    }, [connectionVersion]);
+    }, [connectionVersion, audio]);
 
-    const send = (textOverride) => {
+    const send = (textOverride, opts = {}) => {
         const text = (textOverride ?? draft).trim();
         if (!text || waiting) return;
 
+        const voice = !!opts.voice;
         setError(null);
+        audio.stop();
 
         setMessages((prev) => [
             ...prev,
-            { role: 'user', content: text },
+            { role: 'user', content: text, voice },
             { role: 'assistant', content: '', finished: false, loading: true },
         ]);
 
         const ws = socketRef.current;
-        const doSend = () => ws?.send(JSON.stringify({ message: text }));
+        const doSend = () => ws?.send(JSON.stringify({ message: text, voice }));
         if (ws && ws.readyState === WebSocket.CONNECTING) {
             ws.addEventListener('open', doSend, { once: true });
         } else {
@@ -96,6 +104,7 @@ export default function App() {
     };
 
     const resetChat = () => {
+        audio.stop();
         socketRef.current?.close();
         setMessages([]);
         setDraft('');
@@ -116,6 +125,8 @@ export default function App() {
                     onSend={send}
                     onReset={resetChat}
                     waiting={waiting}
+                    audioPlaying={audio.playing}
+                    onStopAudio={audio.stop}
                 />
                 <RightPanel />
             </div>

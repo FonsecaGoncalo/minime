@@ -52,3 +52,13 @@ variable "ses_to_email" {
   type      = string
   sensitive = true
 }
+
+variable "elevenlabs_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "elevenlabs_voice_id" {
+  type      = string
+  sensitive = true
+}
