@@ -129,6 +129,7 @@ export default function App() {
                     waiting={waiting}
                     audioPlaying={audio.playing}
                     onStopAudio={audio.stop}
+                    onPrimeAudio={audio.prime}
                 />
                 <RightPanel />
             </div>

@@ -282,6 +282,7 @@ export default function LeftPanel({
     waiting,
     audioPlaying,
     onStopAudio,
+    onPrimeAudio,
 }) {
     const scrollerRef = useRef(null);
     const hasUserMsg = messages.some((m) => m.role === 'user');
@@ -303,8 +304,13 @@ export default function LeftPanel({
     };
 
     const toggleMic = () => {
-        if (listening) stop();
-        else start();
+        if (listening) {
+            stop();
+        } else {
+            // Must run inside the tap handler so iOS Safari unlocks audio.
+            onPrimeAudio?.();
+            start();
+        }
     };
 
     return (
