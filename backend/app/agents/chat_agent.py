@@ -17,7 +17,7 @@ from tracing_utils import log_ctx
 
 logger = logging.getLogger(__name__)
 
-MAX_TOKENS_RESPONSE = 512
+MAX_TOKENS_RESPONSE = 400
 
 
 def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str:
@@ -35,9 +35,13 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
     llm = AnthropicChatGenerator(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         streaming_callback=lambda chunk: on_stream(chunk.content) if chunk.content else None,
-        generation_kwargs={"temperature": 0.7, "top_p": 0.9},
+        generation_kwargs={
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "max_tokens": MAX_TOKENS_RESPONSE,
+        },
     )
 
     result = Agent(

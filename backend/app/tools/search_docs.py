@@ -28,8 +28,8 @@ def make_search_docs(session_id, memory_snapshot):
                 },
                 "pinecone_retriever": {
                     "session_id": session_id,
-                    "top_k": 40,
-                    "top_n": 20,
+                    "top_k": 30,
+                    "top_n": 15,
                 }
             })["pinecone_retriever"]["documents"]
 
