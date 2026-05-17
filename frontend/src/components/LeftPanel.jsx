@@ -6,8 +6,8 @@ import FlyingLogos from './FlyingLogos';
 const SUGGESTED = [
     "Tech stack?",
     "Projects you're proud of",
-    "Walk me through Paytient",
-    "What's next for you?",
+    "How'd you build this site?",
+    "What do you do for fun?",
 ];
 
 const LEFT_GRADIENT =
