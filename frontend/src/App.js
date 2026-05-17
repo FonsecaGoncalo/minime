@@ -29,36 +29,36 @@ export default function App() {
 
             if (data.op === 'message_chunk') {
                 setMessages((prev) => {
-                    const last = prev[prev.length - 1];
+                    const cleaned = prev.filter((m) => m.role !== 'tool');
+                    const last = cleaned[cleaned.length - 1];
                     if (last?.role === 'assistant' && !last.finished) {
                         last.content += data.content;
                         last.loading = false;
-                        return [...prev];
+                        return [...cleaned];
                     }
-                    return [...prev, { role: 'assistant', content: data.content, finished: false, loading: false }];
+                    return [...cleaned, { role: 'assistant', content: data.content, finished: false, loading: false }];
                 });
             }
 
             if (data.op === 'tool_use') {
                 setMessages((prev) => {
-                    const next = prev
-                        .map((m) =>
-                            m.role === 'assistant' && !m.finished
-                                ? { ...m, finished: true, loading: false }
-                                : m
-                        )
-                        .filter((m) => !(m.role === 'assistant' && m.content === ''));
+                    const next = prev.filter(
+                        (m) =>
+                            m.role !== 'tool' &&
+                            !(m.role === 'assistant' && m.content === '')
+                    );
                     return [...next, { role: 'tool', name: data.name }];
                 });
             }
 
             if (data.op === 'finish') {
                 setMessages((prev) => {
-                    const last = prev[prev.length - 1];
+                    const cleaned = prev.filter((m) => m.role !== 'tool');
+                    const last = cleaned[cleaned.length - 1];
                     if (last?.role === 'assistant') {
-                        return [...prev.slice(0, -1), { ...last, finished: true, loading: false }];
+                        return [...cleaned.slice(0, -1), { ...last, finished: true, loading: false }];
                     }
-                    return prev;
+                    return cleaned;
                 });
                 setWaiting(false);
             }

@@ -2,11 +2,11 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 
 const TOOL_LABELS = {
-    search_docs: 'Searched knowledge base',
-    schedule_meeting: 'Scheduled meeting',
-    update_user_info: 'Updated profile',
-    get_current_time: 'Checked current time',
-    convert_time: 'Converted timezone',
+    search_docs: 'Searching the knowledge base',
+    schedule_meeting: 'Scheduling a meeting',
+    update_user_info: 'Updating profile',
+    get_current_time: 'Checking the current time',
+    convert_time: 'Converting timezone',
 };
 
 const Icon = ({ name }) => {
@@ -68,6 +68,7 @@ const ToolPillBase = ({ name }) => {
         <motion.div
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="flex gap-3.5 items-center max-w-full"
         >
@@ -75,7 +76,9 @@ const ToolPillBase = ({ name }) => {
                 aria-hidden="true"
                 className="flex-shrink-0 inline-block w-8"
             />
-            <span
+            <motion.span
+                animate={{ opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 1.6, ease: 'easeInOut', repeat: Infinity }}
                 className="inline-flex items-center gap-2 text-[12px] text-ink-soft rounded-full whitespace-nowrap leading-none"
                 style={{
                     letterSpacing: '0.3px',
@@ -87,8 +90,8 @@ const ToolPillBase = ({ name }) => {
                 }}
             >
                 <Icon name={name} />
-                {label}
-            </span>
+                {label}…
+            </motion.span>
         </motion.div>
     );
 };
