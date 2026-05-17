@@ -12,6 +12,8 @@ export default function App() {
     const [connectionVersion, setConnectionVersion] = useState(0);
     const socketRef = useRef(null);
     const audio = useAudioQueue();
+    const audioRef = useRef(audio);
+    audioRef.current = audio;
 
     useEffect(() => {
         const socket = new WebSocket('wss://api.gfonseca.io');
@@ -54,7 +56,7 @@ export default function App() {
             }
 
             if (data.op === 'audio_chunk' && !data.final) {
-                audio.enqueue(data.turn_id, data.b64_mp3);
+                audioRef.current.enqueue(data.turn_id, data.b64_mp3);
             }
 
             if (data.op === 'finish') {
@@ -76,7 +78,7 @@ export default function App() {
         };
 
         return () => socket.close();
-    }, [connectionVersion, audio]);
+    }, [connectionVersion]);
 
     const send = (textOverride, opts = {}) => {
         const text = (textOverride ?? draft).trim();
