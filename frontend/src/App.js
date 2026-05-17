@@ -55,8 +55,8 @@ export default function App() {
                 });
             }
 
-            if (data.op === 'audio_chunk' && !data.final) {
-                audioRef.current.enqueue(data.turn_id, data.b64_mp3);
+            if (data.op === 'audio_chunk') {
+                audioRef.current.enqueue(data.turn_id, data.b64_mp3, data.eos, data.final);
             }
 
             if (data.op === 'finish') {

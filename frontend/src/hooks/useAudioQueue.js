@@ -15,6 +15,7 @@ export default function useAudioQueue() {
     const currentAudioRef = useRef(null);
     const currentUrlRef = useRef(null);
     const turnIdRef = useRef(null);
+    const pendingPartsRef = useRef([]);
 
     const cleanupCurrent = () => {
         const audio = currentAudioRef.current;
@@ -56,15 +57,21 @@ export default function useAudioQueue() {
         });
     }, []);
 
-    const enqueue = useCallback((turnId, b64Mp3) => {
+    const enqueue = useCallback((turnId, b64Part, eos, final) => {
         if (turnIdRef.current !== turnId) {
             queueRef.current = [];
+            pendingPartsRef.current = [];
             cleanupCurrent();
             turnIdRef.current = turnId;
             setActiveTurnId(turnId);
         }
-        if (b64Mp3) {
-            queueRef.current.push(base64ToBlob(b64Mp3));
+        if (final) return;
+        if (b64Part) pendingPartsRef.current.push(b64Part);
+        if (eos) {
+            const full = pendingPartsRef.current.join('');
+            pendingPartsRef.current = [];
+            if (!full) return;
+            queueRef.current.push(base64ToBlob(full));
             if (!currentAudioRef.current) {
                 setPlaying(true);
                 playNext();
@@ -74,6 +81,7 @@ export default function useAudioQueue() {
 
     const stop = useCallback(() => {
         queueRef.current = [];
+        pendingPartsRef.current = [];
         cleanupCurrent();
         turnIdRef.current = null;
         setActiveTurnId(null);

@@ -26,9 +26,14 @@ _RATE_LIMITER = TokenBucket(TokenBucketConfig(4, 6))
 class _Operation(TypedDict, total=False):
     type: str
     payload: str | None
-    seq: int
     turn_id: str
+    eos: bool
     final: bool
+
+
+# API Gateway WebSocket has a 32 KB per-frame limit. Keep base64 audio parts
+# well under that so the JSON wrapper still fits.
+_AUDIO_PART_BYTES = 24 * 1024
 
 
 class OutboundMessenger:
@@ -77,8 +82,8 @@ class OutboundMessenger:
                 self._post(apigw_client, json.dumps({
                     "op": "audio_chunk",
                     "turn_id": operation["turn_id"],
-                    "seq": operation["seq"],
                     "b64_mp3": operation["payload"],
+                    "eos": operation.get("eos", False),
                     "final": operation.get("final", False),
                 }))
             elif operation["type"] == "finish":
@@ -109,12 +114,12 @@ class OutboundMessenger:
             payload=name,
         ))
 
-    def audio_chunk(self, turn_id: str, seq: int, b64_mp3: str, final: bool) -> None:
+    def audio_chunk(self, turn_id: str, b64_part: str, eos: bool, final: bool) -> None:
         self.operations.put(_Operation(
             type="audio_chunk",
-            payload=b64_mp3,
+            payload=b64_part,
             turn_id=turn_id,
-            seq=seq,
+            eos=eos,
             final=final,
         ))
 
@@ -170,12 +175,17 @@ def handler(event, context):
             voice = False
 
         turn_id = uuid.uuid4().hex
-        audio_seq = {"n": 0}
 
         def emit_audio(b64_mp3: str, final: bool) -> None:
-            seq = audio_seq["n"]
-            audio_seq["n"] += 1
-            outbound_messenger.audio_chunk(turn_id, seq, b64_mp3, final)
+            if final:
+                outbound_messenger.audio_chunk(turn_id, "", False, True)
+                return
+            if not b64_mp3:
+                return
+            for i in range(0, len(b64_mp3), _AUDIO_PART_BYTES):
+                part = b64_mp3[i: i + _AUDIO_PART_BYTES]
+                is_last = (i + _AUDIO_PART_BYTES) >= len(b64_mp3)
+                outbound_messenger.audio_chunk(turn_id, part, is_last, False)
 
         messenger_thread = Thread(
             target=lambda: outbound_messenger.run(),
