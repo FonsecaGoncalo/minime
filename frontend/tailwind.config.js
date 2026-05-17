@@ -7,35 +7,42 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Antigravity Palette (Stark & Minimal)
-        brand: {
-          light: '#3C4043',
-          DEFAULT: '#121317', // Primary Charcoal
-          dark: '#000000',
+        // Outer frame
+        frame: '#2a1c12',
+
+        // Left panel (warm)
+        paper: '#f5e8d0',
+        amberSoft: '#f3c065',
+        amber: '#ec8f3e',
+        terracotta: '#c0623e',
+        ink: {
+          DEFAULT: '#1c1815',
+          soft: '#52473a',
+          muted: '#8b7a64',
         },
         accent: {
-          DEFAULT: '#E8EAED', // Light Gray for secondary buttons
-          hover: '#DADCE0',
+          DEFAULT: '#b85a3a',
+          soft: '#ec8f3e',
         },
-        surface: '#FFFFFF',
-        surfaceAlt: '#F8F9FA',
-        ink: {
-          DEFAULT: '#121317', // Charcoal
-          light: '#3C4043',   // Medium Gray
-          lighter: '#5F6368', // Light Gray
+
+        // Right panel (dusk)
+        night: {
+          DEFAULT: '#1e3447',
+          deep: '#152333',
+          soft: '#284359',
         },
-        border: {
-          DEFAULT: '#DADCE0',
-          light: '#F1F3F4',
+        cream: {
+          DEFAULT: '#f3e9d3',
+          soft: '#cfc3a8',
         },
       },
       borderRadius: {
-        '4xl': '2rem',
-        '5xl': '2.5rem',
-        'pill': '9999px',
+        pane: '20px',
       },
       fontFamily: {
-        sans: ['"Outfit"', '"Google Sans"', 'sans-serif'],
+        sans: ['"Geist"', '"Inter"', 'system-ui', 'sans-serif'],
+        serif: ['"Fraunces"', '"Times New Roman"', 'serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
     },
   },
