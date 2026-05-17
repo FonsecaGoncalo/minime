@@ -39,6 +39,19 @@ export default function App() {
                 });
             }
 
+            if (data.op === 'tool_use') {
+                setMessages((prev) => {
+                    const next = prev
+                        .map((m) =>
+                            m.role === 'assistant' && !m.finished
+                                ? { ...m, finished: true, loading: false }
+                                : m
+                        )
+                        .filter((m) => !(m.role === 'assistant' && m.content === ''));
+                    return [...next, { role: 'tool', name: data.name }];
+                });
+            }
+
             if (data.op === 'finish') {
                 setMessages((prev) => {
                     const last = prev[prev.length - 1];

@@ -45,6 +45,14 @@ class OutboundMessenger:
                         "content": operation["payload"],
                     }),
                 )
+            elif operation["type"] == "tool_use":
+                apigw_client.post_to_connection(
+                    ConnectionId=self.connection_id,
+                    Data=json.dumps({
+                        "op": "tool_use",
+                        "name": operation["payload"],
+                    }),
+                )
             elif operation["type"] == "finish":
                 apigw_client.post_to_connection(
                     ConnectionId=self.connection_id,
@@ -73,6 +81,12 @@ class OutboundMessenger:
         self.operations.put(_Operation(
             type="message",
             payload=payload,
+        ))
+
+    def tool_use(self, name: str) -> None:
+        self.operations.put(_Operation(
+            type="tool_use",
+            payload=name,
         ))
 
     def finish(self) -> None:
@@ -138,7 +152,12 @@ def handler(event, context):
                 return {"statusCode": 429, "body": "Rate limit exceeded"}
 
             logger.info("chat: %s", message_text)
-            chat(connection_id, message_text, on_stream=lambda chunk: outbound_messenger.message(payload=chunk))
+            chat(
+                connection_id,
+                message_text,
+                on_stream=lambda chunk: outbound_messenger.message(payload=chunk),
+                on_tool=lambda name: outbound_messenger.tool_use(name=name),
+            )
 
             return {"statusCode": 200}
         except Exception as e:

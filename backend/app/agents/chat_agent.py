@@ -20,7 +20,12 @@ logger = logging.getLogger(__name__)
 MAX_TOKENS_RESPONSE = 400
 
 
-def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str:
+def chat(
+        session_id: str,
+        message: str,
+        on_stream: Callable[[str], None],
+        on_tool: Callable[[str], None] | None = None,
+) -> str:
     logger.info("inside chat: %s", message)
     mem = MemoryManager(
         session_id=session_id,
@@ -34,9 +39,17 @@ def chat(session_id: str, message: str, on_stream: Callable[[str], None]) -> str
 
     logger.info("Messages: %s", messages, **log_ctx(session_id=session_id))
 
+    def streaming_callback(chunk):
+        if chunk.content:
+            on_stream(chunk.content)
+        if on_tool and chunk.tool_calls:
+            for tc in chunk.tool_calls:
+                if tc.tool_name:
+                    on_tool(tc.tool_name)
+
     llm = AnthropicChatGenerator(
         model="claude-sonnet-4-6",
-        streaming_callback=lambda chunk: on_stream(chunk.content) if chunk.content else None,
+        streaming_callback=streaming_callback,
         generation_kwargs={
             "temperature": 0.7,
             "max_tokens": MAX_TOKENS_RESPONSE,

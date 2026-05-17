@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AssistantBubble, UserBubble } from './Bubbles';
+import { ToolPill } from './ToolPill';
 import FlyingLogos from './FlyingLogos';
 
 const SUGGESTED = [
@@ -270,18 +271,22 @@ export default function LeftPanel({
                             className="flex-1 overflow-auto w-full flex flex-col gap-[18px] pb-4"
                             style={{ scrollBehavior: 'smooth' }}
                         >
-                            {messages.map((m, i) =>
-                                m.role === 'user' ? (
-                                    <UserBubble key={i} text={m.content} />
-                                ) : (
+                            {messages.map((m, i) => {
+                                if (m.role === 'user') {
+                                    return <UserBubble key={i} text={m.content} />;
+                                }
+                                if (m.role === 'tool') {
+                                    return <ToolPill key={i} name={m.name} />;
+                                }
+                                return (
                                     <AssistantBubble
                                         key={i}
                                         text={m.content}
                                         finished={m.finished}
                                         loading={m.loading}
                                     />
-                                )
-                            )}
+                                );
+                            })}
                         </motion.div>
                     )}
                 </AnimatePresence>
