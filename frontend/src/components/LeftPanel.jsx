@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AssistantBubble, UserBubble } from './Bubbles';
+import FlyingLogos from './FlyingLogos';
 
 const SUGGESTED = [
     "Tech stack?",
@@ -56,24 +57,22 @@ function HeroEmptyState() {
     return (
         <div>
             <h1
-                className="font-serif font-normal text-ink"
+                className="font-sans font-medium text-ink"
                 style={{
                     fontSize: 'clamp(48px, 6.5vw, 88px)',
                     lineHeight: 0.96,
-                    letterSpacing: '-0.025em',
+                    letterSpacing: '-0.035em',
                     margin: '0 0 18px',
                     maxWidth: 540,
                 }}
             >
-                Hi — I'm Gonçalo.<br />
-                <em className="italic">Ask me anything.</em>
+                Hi! I'm Gonçalo.
             </h1>
             <p
                 className="m-0 text-ink-soft"
                 style={{ fontSize: 17, lineHeight: 1.55, maxWidth: 460 }}
             >
-                Software engineer, across backend, infra,
-                and the parts in between.
+                Software engineer.
                 <span className="hidden max-[980px]:inline">
                     {' '}CV&nbsp;below&nbsp;↓
                 </span>
@@ -235,17 +234,19 @@ export default function LeftPanel({
     return (
         <section
             className="sp-side relative overflow-hidden rounded-pane text-ink"
-            style={{ background: LEFT_GRADIENT }}
+            style={{ background: LEFT_GRADIENT, isolation: 'isolate' }}
         >
+            <FlyingLogos className="z-0" />
+
             <header
-                className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between gap-3 px-9 py-7 max-[980px]:px-5 max-[980px]:py-5"
+                className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between gap-3 px-9 py-7 max-[980px]:px-5 max-[980px]:py-5"
             >
                 <Wordmark onReset={onReset} />
                 <StatusPill />
             </header>
 
             <div
-                className="w-full h-full flex flex-col box-border pt-[100px] px-9 pb-9 max-[980px]:pt-[84px] max-[980px]:px-5 max-[980px]:pb-5"
+                className="relative z-10 w-full h-full flex flex-col box-border pt-[100px] px-9 pb-9 max-[980px]:pt-[84px] max-[980px]:px-5 max-[980px]:pb-5"
             >
                 <AnimatePresence mode="wait" initial={false}>
                     {!hasUserMsg ? (

@@ -249,12 +249,12 @@ export default function RightPanel() {
                 <div style={{marginBottom: 56}}>
                     <SectionLabel>About</SectionLabel>
                     <p
-                        className="m-0 font-serif font-normal text-cream"
+                        className="m-0 font-sans font-medium text-cream"
                         style={{
                             marginTop: 14,
                             fontSize: 28,
                             lineHeight: 1.35,
-                            letterSpacing: '-0.01em',
+                            letterSpacing: '-0.02em',
                         }}
                     >
                         Software engineer, based in Porto, Portugal. I enjoy working at the intersection of product and platform — building products that make users' lives easier.
