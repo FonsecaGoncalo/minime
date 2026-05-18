@@ -55,7 +55,7 @@ def synthesize(text: str) -> bytes | None:
         "text": text,
         "model_id": _MODEL_ID,
         "output_format": "mp3_44100_128",
-        "voice_settings": {"stability": 0.5, "similarity_boost": 0.75},
+        "voice_settings": {"stability": 0.5, "similarity_boost": 1.0, "speed": 1.0},
     }).encode("utf-8")
     req = urllib.request.Request(
         _ELEVENLABS_URL.format(voice_id=voice_id),
