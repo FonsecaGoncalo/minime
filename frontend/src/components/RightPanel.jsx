@@ -4,7 +4,6 @@ const EXPERIENCE = [
     {
         company: 'Paytient',
         role: 'Senior Software Engineer II (promoted from Senior Software Engineer I)',
-        period: '2021 — Nov 2025',
         industry: 'Healthcare/Fintech startup',
         location: 'Remote (USA)',
         summary:
@@ -23,7 +22,6 @@ const EXPERIENCE = [
     {
         company: 'Mindera',
         role: 'Software Engineer',
-        period: '2018 — 2021',
         industry: 'Software consultancy',
         location: 'Porto, Portugal',
         bullets: [
@@ -35,7 +33,6 @@ const EXPERIENCE = [
     {
         company: 'Natixis',
         role: 'Full Stack Engineer',
-        period: '2017 — 2018',
         industry: 'Investment banking',
         location: 'Porto, Portugal',
         bullets: [
@@ -125,25 +122,16 @@ function Icon({kind}) {
     return null;
 }
 
-function Job({company, role, period, industry, location, summary, bullets}) {
+function Job({company, role, industry, location, summary, bullets}) {
     return (
         <article>
-            <header
-                className="flex justify-between items-baseline gap-4"
-                style={{marginBottom: 4}}
-            >
+            <header style={{marginBottom: 4}}>
                 <h3
                     className="m-0 font-serif font-normal text-cream leading-[1.2]"
                     style={{fontSize: 24, letterSpacing: '-0.01em'}}
                 >
                     {company}
                 </h3>
-                <span
-                    className="font-mono whitespace-nowrap text-[12px] text-[rgba(243,233,211,0.55)]"
-                    style={{letterSpacing: '0.4px'}}
-                >
-                    {period}
-                </span>
             </header>
             <div className="text-[14px] text-cream-soft leading-[1.4]">
                 {role}
