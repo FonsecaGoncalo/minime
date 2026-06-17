@@ -8,7 +8,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.9.0",
+    "axios": "^1.10.0",
     "framer-motion": "^12.16.0",
     "mermaid": "^11.9.0",
     "motion-plus": "1.2.0",
